@@ -10,26 +10,28 @@
 
 **Escuela Profesional de Ingeniería de Sistemas**
 
-**Proyecto *{Nombre de Proyecto}***
+**Proyecto *DocuCode-AI: Asistente Inteligente para Evaluación de Código***
 
-Curso: *{Nombre de Asignatura}*
+Curso: *PATRONES DE SOFTWARE*
 
-Docente: *{Nombre de Docente}*
+Docente: *PATRICK JOSE CUADROS QUIROGA*
 
 Integrantes:
 
-***{Apellidos y nombres del estudiante (código universitario)}***
+***Jose Luis Jarro Cachi - 2020067148***  
+***Farley Rodrigo Eduardo Viveros Blanco - 2020066896***  
+***Ronal Daniel Lupaca Mamani - 202006146***
 
 **Tacna – Perú**
 
-***{Año}***
+***2025***
 
 **  
 **
 </center>
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
-Sistema *{Nombre del Sistema}*
+Sistema *DocuCode-AI*
 
 Informe de Factibilidad
 
@@ -38,7 +40,7 @@ Versión *{1.0}*
 |CONTROL DE VERSIONES||||||
 | :-: | :- | :- | :- | :- | :- |
 |Versión|Hecha por|Revisada por|Aprobada por|Fecha|Motivo|
-|1\.0|MPV|ELV|ARV|10/10/2020|Versión Original|
+|1\.0|MPV|ELV|ARV|22/03/2025|Versión Original|
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
@@ -76,24 +78,34 @@ Versión *{1.0}*
 1. <span id="_Toc52661346" class="anchor"></span>**Descripción del Proyecto**
 
     1.1. Nombre del proyecto
-
+**DocuCode-AI: Asistente Inteligente para Evaluación de Código**  
     1.2. Duración del proyecto
+El desarrollo del proyecto se estima en **4 meses**, incluyendo análisis, desarrollo, pruebas e implementación.  
 
     1.3. Descripción
 
-        En que consiste el proyecto/importancia del mismo, contexto en que se va desenvolver
+DocuCode-AI es un sistema web basado en Inteligencia Artificial diseñado para facilitar la evaluación y documentación del código fuente en entornos educativos. Su propósito principal es ayudar a los docentes universitarios a analizar código de manera eficiente, proporcionando comentarios automáticos, generación de diagramas UML y evaluación de calidad del código.  
 
     1.4. Objetivos
 
         1.4.1 Objetivo general
+        Desarrollar un sistema web basado en IA que permita a los docentes evaluar y documentar código de manera                     automatizada, mejorando la calidad y eficiencia del proceso de revisión.  
+
         1.4.2 Objetivos Específicos
-            Para cada objetivo específico se indicara que se va a lograr
+        - Implementar un motor de IA para la generación de comentarios en el código.  
+        - Incorporar herramientas para la creación automática de diagramas UML.  
+        - Evaluar la calidad del código, identificando errores, código duplicado y malas prácticas.  
+        - Integrar el sistema con plataformas educativas para facilitar su adopción.  
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
 2. <span id="_Toc52661347" class="anchor"></span>**Riesgos**
 
-    Señale los riesgos que pudieran afectar el éxito del proyecto.}*
+    - **Dependencia de APIs externas:** Uso de OpenAI API para la generación de comentarios puede generar costos variables.  
+    - **Seguridad de datos:** Protección del código de los estudiantes ante accesos no autorizados.  
+    - **Compatibilidad con múltiples lenguajes de programación:** Diferentes sintaxis pueden afectar la precisión del análisis.  
+    - **Conectividad:** Requiere conexión estable a internet para procesamiento en la nube.  
+
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
@@ -101,77 +113,148 @@ Versión *{1.0}*
 
     3.1. Planteamiento del problema
 
-            Describa antecedentes y situación actual, explicando la problemática y/o necesidad que será resuelta con el proyecto propuesto.
+            Actualmente, los docentes de programación deben revisar manualmente grandes volúmenes de código, lo que es un proceso **lento, subjetivo y propenso a errores**. La falta de documentación en los códigos de los estudiantes dificulta su evaluación y comprensión.  
+
 
     3.2. Consideraciones de hardware y software
 
-            Hardware y software posibles para la implementación, se analizara lo que existe y es alcanzable, se evaluara que tecnología se puede > utilizar en el proyecto.
+   - **Hardware:** Servidor en la nube (Elastika).  
+   - **Software:**  
+          - Backend: PHP y Python.  
+          - Base de datos: MySQL/PostgreSQL.  
+          - APIs: OpenAI API para análisis de código.  
+          - Librerías: PlantUML para generación de diagramas UML.  
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
-4. <span id="_Toc52661349" class="anchor"></span>**Estudio de
-    Factibilidad**
+## 4. Estudio de Factibilidad  
 
-    Describir los resultados que esperan alcanzar del estudio de factibilidad, las actividades que se realizaron para preparar la evaluación de factibilidad y por quien fue aprobado.
+El estudio de factibilidad tiene como objetivo determinar la viabilidad del desarrollo e implementación de **DocuCode-AI**, considerando aspectos técnicos, económicos, operativos, legales, sociales y ambientales.  
 
-    4.1. <span id="_Toc52661350" class="anchor"></span>Factibilidad Técnica
+Para la evaluación, se realizaron las siguientes actividades:  
+- Análisis de **infraestructura y tecnologías** disponibles.  
+- Estimación de **costos operativos y de desarrollo**.  
+- Evaluación de **beneficios y riesgos** del proyecto.  
+- Identificación de **requerimientos legales y normativos**.  
 
-        El estudio de viabilidad técnica se enfoca en obtener un entendimiento de los recursos tecnológicos disponibles actualmente y su aplicabilidad a las necesidades que se espera tenga el proyecto. En el caso de tecnología informática esto implica una evaluación del hardware y software y como este puede cubrir las necesidades del sistema propuesto.
+Este estudio ha sido aprobado por los integrantes del equipo de desarrollo y validado conforme a los criterios establecidos para garantizar su viabilidad.  
 
-        Realizar una evaluación de la tecnología actual existente y la posibilidad de utilizarla en el desarrollo e implantación del sistema.*
+---
 
-        Describir acerca del hardware (equipos, servidor), software (aplicaciones, navegadores, sistemas operativos, dominio, internet, infraestructura de red física, etc.
+### 4.1 Factibilidad Técnica  
 
-    4.2. <span id="_Toc52661351" class="anchor"></span>Factibilidad Económica
+Este apartado analiza los recursos tecnológicos disponibles y su aplicabilidad a **DocuCode-AI**, asegurando que el sistema pueda ser desarrollado y mantenido sin limitaciones técnicas.  
 
-        El propósito del estudio de viabilidad económica, es determinar los beneficios económicos del proyecto o sistema propuesto para la organización, en contraposición con los costos.
-        Como se mencionó anteriormente en el estudio de factibilidad técnica wvaluar si la institución (departamento de TI) cuenta con las herramientas necesarias para la implantación del sistema y evaluar si la propuesta requiere o no de una inversión inicial en infraestructura informática.
-        Se plantearán los costos del proyecto.
-        Costeo del Proyecto: Consiste en estimar los costos de los recursos Humanos, materiales o consumibles y/o máquinas) directos para completar las actividades del proyecto}.*
+#### Evaluación de Hardware y Servidores  
+- **Servidor en la nube:** Se usará **Elastika**, con capacidad escalable según demanda.  
+- **Especificaciones del servidor:** 2 vCPUs, 4GB RAM, 50GB SSD.  
+- **Requerimientos de conectividad:** Acceso estable a internet con latencia mínima.  
 
-        Definir los siguientes costos:
+#### Evaluación de Software  
+- **Lenguajes de programación:**  
+  - Backend: **PHP y Python**.  
+  - Frontend: **HTML, CSS, JavaScript**.  
+- **Base de datos:** **MySQL/PostgreSQL**.  
+- **APIs y Librerías:**  
+  - **OpenAI API:** Generación de comentarios en código.  
+  - **PlantUML:** Creación de diagramas UML.  
+  - **Pylint y AST:** Análisis de código en Python.  
+- **Compatibilidad con navegadores:** Chrome, Firefox, Edge.  
 
-        4.2.1. Costos Generales
+**Conclusión:** DocuCode-AI es técnicamente viable con los recursos y tecnologías disponibles.
 
-                Los costos generales son todos los gastos realizados en accesorios y material de oficina y de uso diario, necesarios para los procesos, tales como, papeles, plumas, cartuchos de impresora, marcadores, computadora etc. Colocar tabla de costos.
+---
 
-        4.2.2. Costos operativos durante el desarrollo 
-        
-                Evaluar costos necesarios para la operatividad de las actividades de la empresa durante el periodo en el que se realizara el proyecto. Los costos de operación pueden ser renta de oficina, agua, luz, teléfono, etc.
+### 4.2 Factibilidad Económica  
 
-        4.2.3. Costos del ambiente
+El análisis económico busca evaluar si los costos del proyecto son sostenibles en relación con los beneficios que ofrece.  
 
-                Evaluar si se cuenta con los requerimientos técnicos para la implantación del software como el dominio, infraestructura de red, acceso a internet, etc.
+#### 4.2.1 Costos Generales  
 
-        4.2.4. Costos de personal
+| **Concepto** | **Costo Estimado** |
+|-------------|------------------|
+| Servidor en la nube (Elastika) | $10 USD/mes |
+| OpenAI API (GPT-4) | $5 - $10 USD/mes |
+| Dominio web | $2.99 USD/año (primer año en Hostinger) |
+| Certificado SSL | $10 - $50 USD/año |
+| **Total estimado mensual** | **$15 - $20 USD** |
+| **Total estimado anual** | **$200 - $300 USD** |
 
-                Aquí se incluyen los gastos generados por el recurso humano que se necesita para el desarrollo del sistema únicamente.
+#### 4.2.2 Costos operativos durante el desarrollo  
+- No se requieren oficinas físicas, ya que el equipo trabajará de forma remota.  
+- Uso de herramientas gratuitas para desarrollo: **VS Code, GitHub, Postman**.  
 
-                No se considerará personal para la operación y funcionamiento del sistema.
+#### 4.2.3 Costos del ambiente  
+- Servidor en la nube con Docker y balanceador de carga.  
+- Conexión estable a internet.  
 
-                Incluir tabla que muestra los gastos correspondientes al personal.
+#### 4.2.4 Costos de personal  
+| **Rol** | **Horas estimadas** | **Costo estimado** |
+|---------|-----------------|------------------|
+| Desarrollador Backend | 300 horas | $0 (Desarrollo propio) |
+| Desarrollador Frontend | 250 horas | $0 (Desarrollo propio) |
+| Especialista en IA | 200 horas | $0 (Desarrollo propio) |
 
-                Indicar organización y roles. Indicar horario de trabajo del personal.
+#### 4.2.5 Costos totales del desarrollo del sistema  
+El **costo total del desarrollo** se estima en **$200 - $300 USD/año**, cubriendo infraestructura y API de OpenAI.  
 
-        4.2.5.  Costos totales del desarrollo del sistema
+**Conclusión:** El proyecto es económicamente viable con un presupuesto accesible.
 
-                {Totalizar costos y realizar resumen de costo final del proyecto y la forma de pago.
+---
 
-    4.3. <span id="_Toc52661352" class="anchor"></span>Factibilidad Operativa
+### 4.3 Factibilidad Operativa  
 
-        Describir los beneficios del producto y si se tiene la capacidad por parte del cliente para mantener el sistema funcionando y garantizar el buen funcionamiento y su impacto en los usuarios. Lista de interesados.
+Se analiza si el sistema puede ser operado correctamente por los usuarios finales (docentes).  
 
-    4.4. <span id="_Toc52661353" class="anchor"></span>Factibilidad Legal
+#### Beneficios esperados  
+- **Evaluación automatizada de código** con IA.  
+- **Interfaz amigable** compatible con navegadores modernos.  
+- **Reducción del tiempo de revisión** de horas a minutos.  
+- **Integración con Moodle y Google Classroom** para facilitar la adopción.  
 
-        Determinar si existe conflicto del proyecto con restricciones legales como leyes y regulaciones del país o locales relacionadas con seguridad, protección de datos, conducta de negocio, empleo y adquisiciones.
+**Conclusión:** DocuCode-AI es operativamente viable y fácil de adoptar en entornos educativos.
 
-    4.5. <span id="_Toc52661354" class="anchor"></span>Factibilidad Social 
+---
 
-        Evaluar influencias y asuntos de índole social y cultural como el clima político, códigos de conducta y ética*
+### 4.4 Factibilidad Legal  
 
-    4.6. <span id="_Toc52661355" class="anchor"></span>Factibilidad Ambiental
+El proyecto debe cumplir con regulaciones sobre protección de datos y propiedad intelectual.  
 
-        Evaluar influencias y asuntos de índole ambiental como el impacto y repercusión en el medio ambiente.
+#### Aspectos legales considerados  
+- **Protección de datos:** Implementación de cifrado SSL/TLS y cumplimiento con GDPR si es necesario.  
+- **Propiedad del código:** Se establecerán términos de uso claros sobre la privacidad del código analizado.  
+- **Licenciamiento:** Código bajo licencia libre con opción de suscripción para funcionalidades premium.  
+
+**Conclusión:** No existen restricciones legales que impidan la implementación de **DocuCode-AI**.
+
+---
+
+### 4.5 Factibilidad Social  
+
+#### Impacto social positivo  
+- **Optimización del proceso de enseñanza en programación.**  
+- **Reducción de carga de trabajo para docentes.**  
+- **Accesibilidad para estudiantes que necesitan retroalimentación en su código.**  
+
+**Conclusión:** DocuCode-AI contribuirá a la mejora del aprendizaje y la eficiencia en la educación.
+
+---
+
+### 4.6 Factibilidad Ambiental  
+
+El sistema será desarrollado en la nube, minimizando el impacto ambiental.  
+
+#### Consideraciones ambientales  
+- **Menor consumo energético:** Uso de servidores optimizados en la nube en lugar de infraestructura física.  
+- **Reducción de uso de papel:** Documentación automatizada digitalmente en lugar de informes impresos.  
+
+**Conclusión:** **DocuCode-AI es un sistema sostenible y con bajo impacto ambiental.**  
+
+---
+
+### **Conclusión Final**  
+El análisis de factibilidad confirma que **DocuCode-AI** es viable **técnica, económica, operativa, legal, social y ambientalmente**. Su implementación mejorará significativamente la evaluación de código en entornos educativos. 🚀  
+
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
