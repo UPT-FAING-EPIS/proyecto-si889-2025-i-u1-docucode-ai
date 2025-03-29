@@ -10,7 +10,7 @@
 
 **Escuela Profesional de Ingeniería de Sistemas**
 
-**Proyecto *DocuCode-AI: Asistente Inteligente para Evaluación de Código***
+**Proyecto *DocuCode-AI: Sistema Web para la evaluacion de codigo y generacion de digramas UML***
 
 Curso: *PATRONES DE SOFTWARE*
 
@@ -78,7 +78,7 @@ Versión *{1.0}*
 1. <span id="_Toc52661346" class="anchor"></span>**Descripción del Proyecto**
 
     1.1. Nombre del proyecto
-**DocuCode-AI: Asistente Inteligente para Evaluación de Código**  
+**DocuCode-AI: Sistema Web para la evaluacion de codigo y generacion de digramas UML**  
     1.2. Duración del proyecto
 El desarrollo del proyecto se estima en **4 meses**, incluyendo análisis, desarrollo, pruebas e implementación.  
 
