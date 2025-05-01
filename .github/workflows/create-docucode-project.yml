@@ -39,12 +39,14 @@ jobs:
           echo "Proyecto V2 creado con ID: $PROJECT_ID"
 
       - name: Verificar formato de JSON y crear Issues
-      
         run: |
-          # Verificar si el archivo JSON es válido
-          if ! jq empty .github/issue-list.json; then
-            echo "El archivo JSON tiene errores de sintaxis"
+          # Intentar verificar si el archivo JSON es válido
+          if ! jq empty .github/issue-list.json 2>/tmp/jq_errors.log; then
+            echo "El archivo JSON tiene errores de sintaxis. Verifica el archivo .github/issue-list.json"
+            cat /tmp/jq_errors.log
             exit 1
+          else
+            echo "Archivo JSON válido. Procediendo con la creación de los issues."
           fi
           
           # Crear issues y agregarlos al proyecto
