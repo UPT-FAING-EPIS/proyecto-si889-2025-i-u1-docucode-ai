@@ -33,9 +33,13 @@ jobs:
           REPO="DOCUCODE-IA"
           PROJECT_ID=248 # ID del proyecto clásico ya creado
           
-          # Obtener la lista de columnas del proyecto clásico
+          # Obtener las columnas del proyecto clásico y mostrar la respuesta
           COLUMNS=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/projects/$PROJECT_ID/columns)
-          COLUMN_ID=$(echo "$COLUMNS" | jq -r '.[0].id')  # Usa la primera columna
+          echo "Response from GitHub API (columns): $COLUMNS" # Esto imprime la respuesta completa
+          
+          # Intentar acceder a la primera columna
+          COLUMN_ID=$(echo "$COLUMNS" | jq -r '.[0].id')
+          echo "Column ID: $COLUMN_ID" # Mostrar el ID de la columna
 
           # Leer los issues del archivo JSON y crearlos
           for row in $(jq -c '.[]' .github/issue-list.json); do
