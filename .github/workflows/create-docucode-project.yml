@@ -33,7 +33,8 @@ jobs:
       - name: Crear el proyecto DOCUCODE-IA
         id: crear_proyecto
         run: |
-          gh project create --title "DOCUCODE-IA" --format json > project.json
+          OWNER="tu_usuario_o_organizacion"  # Reemplaza esto con tu usuario u organización en GitHub
+          gh project create --title "DOCUCODE-IA" --owner "$OWNER" --format json > project.json
           echo "PROJECT_ID=$(jq -r '.id' project.json)" >> $GITHUB_ENV
 
       # 6. Verificar si existe el archivo issue-list.json
