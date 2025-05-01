@@ -1,7 +1,11 @@
 name: Crear Proyecto DOCUCODE-IA con Issues
 
 on:
+  push:
+    branches:
+      - JarroJose
   workflow_dispatch:
+
 
 jobs:
   crear-proyecto:
