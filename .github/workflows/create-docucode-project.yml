@@ -38,12 +38,6 @@ jobs:
           
           echo "Proyecto V2 creado con ID: $PROJECT_ID"
 
-      - name: Crear archivo de Issues de ejemplo si no existe
-        run: |
-          if [ ! -f .github/issue-list.json ]; then
-            echo '[{"title": "Issue 1", "body": "Descripción del issue 1"}, {"title": "Issue 2", "body": "Descripción del issue 2"}]' > .github/issue-list.json
-          fi
-
       - name: Crear Issues y agregarlos al Proyecto V2
         run: |
           for row in $(jq -c '.[]' .github/issue-list.json); do
