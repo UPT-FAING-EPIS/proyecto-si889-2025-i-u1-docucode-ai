@@ -6,10 +6,10 @@ on:
       - JarroJose
   workflow_dispatch:
 
-
 jobs:
   crear-proyecto:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
@@ -28,7 +28,8 @@ jobs:
       - name: Crear el proyecto DOCUCODE-IA
         id: crear_proyecto
         run: |
-          gh project create --title "DOCUCODE-IA" --format json > project.json
+          OWNER="${{ github.repository_owner }}"  # Obtiene el propietario automáticamente
+          gh project create --title "DOCUCODE-IA" --owner "$OWNER" --format json > project.json
           echo "PROJECT_ID=$(jq -r '.id' project.json)" >> $GITHUB_ENV
 
       - name: Verificar si existe issue-list.json
