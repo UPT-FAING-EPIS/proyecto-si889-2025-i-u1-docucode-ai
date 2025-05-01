@@ -40,6 +40,15 @@ jobs:
 
       - name: Crear Issues y agregarlos al Proyecto V2
         run: |
+          # Asegurarse de que el archivo JSON es válido
+          if jq empty .github/issue-list.json; then
+            echo "El archivo JSON es válido."
+          else
+            echo "Error en el formato del archivo JSON."
+            exit 1
+          fi
+          
+          # Crear issues y agregar tarjetas al proyecto
           for row in $(jq -c '.[]' .github/issue-list.json); do
             TITLE=$(echo "$row" | jq -r '.title')
             BODY=$(echo "$row" | jq -r '.body')
