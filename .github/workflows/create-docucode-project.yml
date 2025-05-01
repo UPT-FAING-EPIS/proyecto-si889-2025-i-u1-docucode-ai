@@ -38,27 +38,25 @@ jobs:
           
           echo "Proyecto V2 creado con ID: $PROJECT_ID"
 
-      - name: Crear Issues y agregarlos al Proyecto V2
+      - name: Verificar formato de JSON y crear Issues
         run: |
-          # Asegurarse de que el archivo JSON es válido
-          if jq empty .github/issue-list.json; then
-            echo "El archivo JSON es válido."
-          else
-            echo "Error en el formato del archivo JSON."
+          # Verificar si el archivo JSON es válido
+          if ! jq empty .github/issue-list.json; then
+            echo "El archivo JSON tiene errores de sintaxis"
             exit 1
           fi
           
-          # Crear issues y agregar tarjetas al proyecto
+          # Crear issues y agregarlos al proyecto
           for row in $(jq -c '.[]' .github/issue-list.json); do
             TITLE=$(echo "$row" | jq -r '.title')
             BODY=$(echo "$row" | jq -r '.body')
 
-            # Crear issue y obtener URL
+            # Crear issue
             ISSUE_URL=$(curl -s -H "Authorization: token $GH_TOKEN" \
               -X POST https://api.github.com/repos/$OWNER/$REPO/issues \
               -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" | jq -r '.url')
 
-            # Crear tarjeta para el proyecto V2
+            # Crear tarjeta en el proyecto V2
             curl -s -H "Authorization: token $GH_TOKEN" \
               -X POST https://api.github.com/projects/v2/columns/cards \
               -d "{\"project_id\":\"$PROJECT_ID\", \"content_type\":\"Issue\", \"content_url\":\"$ISSUE_URL\"}"

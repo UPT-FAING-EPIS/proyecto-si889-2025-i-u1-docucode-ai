@@ -1,19 +1,11 @@
 [
   {
     "title": "Generar Informe FD01",
-    "body": "Crear el Informe FD01, incluyendo el análisis económico utilizando Terraform, y exportarlo en formato PDF y Markdown. Usar Terraform y exportar en PDF."
-  },
-  {
-    "title": "Generar Informe FD01 en formato MD",
-    "body": "Crear el Informe FD01, incluyendo el análisis económico utilizando Terraform, y exportarlo en formato Markdown (.md)."
-  },
-  {
-    "title": "Generar Informe FD02 en formato PDF",
-    "body": "Crear el Informe FD02, integrando los puntos del GitHub Wikis y el Roadmap, y exportarlo en formato PDF."
+    "body": "Crear el Informe FD01, incluyendo el análisis económico utilizando Terraform, y exportarlo en formato PDF y Markdown."
   },
   {
     "title": "Generar Informe FD02 en formato MD",
-    "body": "Crear el Informe FD02, integrando los puntos del GitHub Wikis y el Roadmap, y exportarlo en formato Markdown (.md)."
+    "body": "Crear el Informe FD02, integrando los puntos del GitHub Wikis y el Roadmap, y exportarlo en formato Markdown."
   },
   {
     "title": "Generar Informe FD03 en formato PDF",
@@ -21,7 +13,7 @@
   },
   {
     "title": "Generar Informe FD03 en formato MD",
-    "body": "Crear el Informe FD03, incluyendo los issues redactados como 'Como...Quiero...Para...', los criterios de aceptación y los escenarios de prueba en formato Gherkin, y exportarlo en formato Markdown (.md)."
+    "body": "Crear el Informe FD03, incluyendo los issues redactados como 'Como...Quiero...Para...', los criterios de aceptación y los escenarios de prueba en formato Gherkin, y exportarlo en formato Markdown."
   },
   {
     "title": "Generar Informe FD04 en formato PDF",
@@ -29,7 +21,7 @@
   },
   {
     "title": "Generar Informe FD04 en formato MD",
-    "body": "Crear el Informe FD04, integrando los diagramas de clases, base de datos, componentes, despliegue, arquitectura e infraestructura obtenidos mediante reverse engineering, y exportarlo en formato Markdown (.md)."
+    "body": "Crear el Informe FD04, integrando los diagramas de clases, base de datos, componentes, despliegue, arquitectura e infraestructura obtenidos mediante reverse engineering, y exportarlo en formato Markdown."
   },
   {
     "title": "Actualizar README con documentación de despliegue",
@@ -57,14 +49,14 @@
   },
   {
     "title": "Crear el proyecto",
-    "body": "Este issue describe la creación inicial del proyecto, configurando las bases y la estructura para su desarrollo."
+    "body": "Crear el proyecto y su estructura inicial para el desarrollo."
   },
   {
     "title": "Funcionalidad del proyecto",
-    "body": "Este issue aborda la definición y planificación de la funcionalidad principal del proyecto, asegurando que cumpla con los requisitos establecidos."
+    "body": "Definir las funcionalidades del proyecto y su alcance."
   },
   {
     "title": "Diagramar el proyecto para una visualización clara",
-    "body": "Este issue implica crear diagramas que ayuden a visualizar la arquitectura, componentes y flujo de datos del proyecto."
+    "body": "Crear diagramas que representen la arquitectura y flujo del proyecto."
   }
 ]
