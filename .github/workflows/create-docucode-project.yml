@@ -1,4 +1,4 @@
-name: Crear Proyecto DOCUCODE-IA con Issues
+name: Crear Proyecto Clásico con Issues
 
 on:
   push:
@@ -9,48 +9,32 @@ on:
 jobs:
   crear-proyecto:
     runs-on: ubuntu-latest
+
     steps:
-      # 1. Checkout del repositorio
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      # 2. Instalar GitHub CLI
       - name: Instalar GitHub CLI
+        run: sudo apt-get install gh -y
+
+      - name: Autenticarse con GitHub CLI
         run: |
-          sudo apt-get install gh -y
+          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
 
-      # 3. Instalar jq
-      - name: Instalar jq
+      - name: Crear Proyecto Clásico
         run: |
-          sudo apt-get install jq -y
+          gh project create "DOCUCODE-IA" --body "Proyecto clásico de prueba para issues." --visibility public
 
-      # ❌ NO autenticamos con gh auth login — se usa GH_TOKEN directamente
-
-      # 4. Crear el proyecto DOCUCODE-IA (como usuario)
-      - name: Crear el proyecto DOCUCODE-IA
-        id: crear_proyecto
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          gh project create --title "DOCUCODE-IA" --owner "Jose25UPT" --format json > project.json
-          echo "PROJECT_ID=$(jq -r '.id' project.json)" >> $GITHUB_ENV
-
-      # 5. Verificar si existe issue-list.json
-      - name: Verificar si existe issue-list.json
+      - name: Crear archivo de Issues de ejemplo si no existe
         run: |
           if [ ! -f .github/issue-list.json ]; then
-            echo "El archivo issue-list.json no existe en .github/"
-            exit 1
+            echo '[{"title": "Issue 1", "body": "Descripción del issue 1"}, {"title": "Issue 2", "body": "Descripción del issue 2"}]' > .github/issue-list.json
           fi
 
-      # 6. Crear Issues y añadirlos al Proyecto
-      - name: Crear Issues y añadirlos al Proyecto
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Crear Issues
         run: |
           for row in $(jq -c '.[]' .github/issue-list.json); do
             TITLE=$(echo "$row" | jq -r '.title')
             BODY=$(echo "$row" | jq -r '.body')
-            ISSUE_URL=$(gh issue create --title "$TITLE" --body "$BODY" --json url | jq -r '.url')
-            gh project item-add $PROJECT_ID --url "$ISSUE_URL"
+            gh issue create --title "$TITLE" --body "$BODY"
           done
