@@ -56,15 +56,15 @@
     "body": "Crear una presentación utilizando Marp y grabar un video de la exposición, subiéndolo a YouTube."
   },
   {
-    "title": "Crear el proyecto ",
-    "body": ""
+    "title": "Crear el proyecto",
+    "body": "Este issue describe la creación inicial del proyecto, configurando las bases y la estructura para su desarrollo."
   },
   {
     "title": "Funcionalidad del proyecto",
-    "body": ""
+    "body": "Este issue aborda la definición y planificación de la funcionalidad principal del proyecto, asegurando que cumpla con los requisitos establecidos."
   },
   {
-    "title": "Diagramar el proyecto para una visualizacion clara",
-    "body": ""
+    "title": "Diagramar el proyecto para una visualización clara",
+    "body": "Este issue implica crear diagramas que ayuden a visualizar la arquitectura, componentes y flujo de datos del proyecto."
   }
 ]
