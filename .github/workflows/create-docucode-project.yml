@@ -39,6 +39,7 @@ jobs:
           echo "Proyecto V2 creado con ID: $PROJECT_ID"
 
       - name: Verificar formato de JSON y crear Issues
+      
         run: |
           # Verificar si el archivo JSON es válido
           if ! jq empty .github/issue-list.json; then
