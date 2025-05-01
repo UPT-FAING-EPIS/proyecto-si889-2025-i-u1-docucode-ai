@@ -19,79 +19,91 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq curl
 
-      - name: Autenticarse con GitHub CLI
+      - name: Autenticarse con GitHub
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+          echo "$GH_TOKEN" | gh auth login --with-token
 
-      - name: Crear Proyecto en la nueva experiencia
+      - name: Crear Proyecto
+        id: create_project
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           OWNER="UPT-FAING-EPIS"
           REPO="DOCUCODE-IA"
           
-          # Crear proyecto V2
-          PROJECT_JSON=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          # Crear proyecto con respuesta detallada
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            -X POST https://api.github.com/repos/$OWNER/$REPO/projects \
-            -d '{"name": "DOCUCODE-IA", "body": "Proyecto usando nueva experiencia", "visibility": "public"}')
+            -X POST "https://api.github.com/repos/$OWNER/$REPO/projects" \
+            -d '{"name":"DOCUCODE-IA","body":"Proyecto usando nueva experiencia","visibility":"public"}')
           
-          PROJECT_ID=$(echo "$PROJECT_JSON" | jq -r '.id')
-          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+          # Separar cuerpo de respuesta y código HTTP
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
           
-          echo "Proyecto V2 creado con ID: $PROJECT_ID"
-
-      - name: Verificar formato de JSON
-        run: |
-          # Validar el archivo JSON
-          if ! jq empty .github/issue-list.json >/dev/null 2>&1; then
-            echo "::error::El archivo JSON tiene problemas de formato."
-            jq . .github/issue-list.json  # Mostrar el contenido para debug
+          if [ "$HTTP_CODE" != "201" ]; then
+            echo "::error::Error creando proyecto. Código: $HTTP_CODE"
+            echo "$BODY"
             exit 1
-          else
-            echo "Archivo JSON válido."
           fi
+          
+          PROJECT_ID=$(echo "$BODY" | jq -r '.id')
+          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+          echo "project_id=$PROJECT_ID" >> $GITHUB_OUTPUT
+          
+          echo "Proyecto creado con ID: $PROJECT_ID"
 
-      - name: Crear Issues y agregar al proyecto
+      - name: Verificar JSON
+        run: |
+          if ! jq -e . .github/issue-list.json >/dev/null; then
+            echo "::error::Error en el formato JSON:"
+            jq . .github/issue-list.json
+            exit 1
+          fi
+          echo "JSON válido"
+
+      - name: Crear Issues
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           OWNER="UPT-FAING-EPIS"
           REPO="DOCUCODE-IA"
           PROJECT_ID=${{ env.PROJECT_ID }}
 
-          # Obtener el ID de la columna predeterminada
-          COLUMNS_JSON=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          # Obtener columna del proyecto
+          COLUMNS=$(curl -s \
+            -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/projects/$PROJECT_ID/columns")
           
-          COLUMN_ID=$(echo "$COLUMNS_JSON" | jq -r '.[0].id')
+          COLUMN_ID=$(echo "$COLUMNS" | jq -r '.[0].id')
           echo "COLUMN_ID=$COLUMN_ID" >> $GITHUB_ENV
 
-          # Crear issues y agregarlos al proyecto
-          while IFS= read -r row; do
-            TITLE=$(echo "$row" | jq -r '.title')
-            BODY=$(echo "$row" | jq -r '.body')
+          # Procesar issues
+          while IFS= read -r issue; do
+            TITLE=$(echo "$issue" | jq -r '.title')
+            BODY=$(echo "$issue" | jq -r '.body')
 
             # Crear issue
-            ISSUE_JSON=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            ISSUE=$(curl -s \
+              -H "Authorization: token $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
               -X POST "https://api.github.com/repos/$OWNER/$REPO/issues" \
               -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}")
             
-            ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.id')
-            ISSUE_NODE_ID=$(echo "$ISSUE_JSON" | jq -r '.node_id')
+            ISSUE_ID=$(echo "$ISSUE" | jq -r '.id')
+            NODE_ID=$(echo "$ISSUE" | jq -r '.node_id')
 
-            # Agregar issue al proyecto
-            curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            # Agregar al proyecto
+            curl -s \
+              -H "Authorization: token $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
               -X POST "https://api.github.com/projects/columns/$COLUMN_ID/cards" \
-              -d "{\"content_id\":\"$ISSUE_NODE_ID\",\"content_type\":\"Issue\"}"
+              -d "{\"content_id\":\"$NODE_ID\",\"content_type\":\"Issue\"}"
 
-            echo "Issue creado: $TITLE"
+            echo "✔ Issue creado: $TITLE"
           done < <(jq -c '.[]' .github/issue-list.json)
-
-      - name: Mostrar resultados
-        run: |
-          echo "Proyecto creado con ID: ${{ env.PROJECT_ID }}"
-          echo "Issues agregados a la columna con ID: ${{ env.COLUMN_ID }}"
