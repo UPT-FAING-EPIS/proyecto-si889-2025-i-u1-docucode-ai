@@ -1,4 +1,4 @@
-name: Crear Issues en Proyecto Existente
+name: Crear Issues en Proyecto Classic
 
 on:
   push:
@@ -23,20 +23,20 @@ jobs:
           fi
           echo "✓ JSON válido"
 
-      - name: Crear Issues en Proyecto
+      - name: Crear Issues en Proyecto Classic
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          PROJECT_ID: "248"  # Verifica este ID
+          PROJECT_NUMBER: "248"  # Número visible en la URL
         run: |
           OWNER="UPT-FAING-EPIS"
           REPO="DOCUCODE-IA"
 
-          # Paso 1: Obtener columnas del proyecto (con debug)
-          echo "Obteniendo columnas del proyecto $PROJECT_ID..."
+          # Paso 1: Obtener columnas del proyecto CLASSIC
+          echo "Obteniendo columnas del proyecto $PROJECT_NUMBER..."
           COLUMNS_RESPONSE=$(curl -s -w "\n%{http_code}" \
             -H "Authorization: token $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/projects/$PROJECT_ID/columns")
+            -H "Accept: application/vnd.github.inertia-preview+json" \
+            "https://api.github.com/repos/$OWNER/$REPO/projects/$PROJECT_NUMBER/columns")
 
           HTTP_CODE=$(echo "$COLUMNS_RESPONSE" | tail -n1)
           COLUMNS_JSON=$(echo "$COLUMNS_RESPONSE" | sed '$d')
@@ -47,7 +47,7 @@ jobs:
             exit 1
           fi
 
-          # Paso 2: Extraer ID de la primera columna
+          # Paso 2: Extraer ID de la primera columna (CLASSIC)
           COLUMN_ID=$(echo "$COLUMNS_JSON" | jq -r '.[0].id')
           if [ "$COLUMN_ID" == "null" ]; then
             echo "::error::No se encontraron columnas en el proyecto"
@@ -56,7 +56,7 @@ jobs:
           fi
           echo "✓ Columna ID: $COLUMN_ID"
 
-          # Paso 3: Crear issues
+          # Paso 3: Crear issues y agregar al proyecto
           jq -c '.[]' .github/issue-list.json | while read -r issue; do
             TITLE=$(echo "$issue" | jq -r '.title')
             BODY=$(echo "$issue" | jq -r '.body')
@@ -69,13 +69,12 @@ jobs:
               -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}")
 
             ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.id')
-            NODE_ID=$(echo "$ISSUE_JSON" | jq -r '.node_id')
 
-            # Agregar al proyecto
+            # Agregar al proyecto CLASSIC
             curl -s -H "Authorization: token $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
+              -H "Accept: application/vnd.github.inertia-preview+json" \
               -X POST "https://api.github.com/projects/columns/$COLUMN_ID/cards" \
-              -d "{\"content_id\":\"$NODE_ID\",\"content_type\":\"Issue\"}"
+              -d "{\"content_id\":$ISSUE_ID, \"content_type\":\"Issue\"}"
 
             echo "✓ Issue creado: $TITLE (ID: $ISSUE_ID)"
           done
