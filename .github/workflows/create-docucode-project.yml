@@ -9,67 +9,42 @@ on:
 jobs:
   crear-proyecto:
     runs-on: ubuntu-latest
-
     steps:
-      # Paso 1: Checkout del repositorio
+      # 1. Checkout del repositorio
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      # Paso 2: Instalar GitHub CLI
+      # 2. Instalar GitHub CLI
       - name: Instalar GitHub CLI
         run: |
           sudo apt-get install gh -y
 
-      # Paso 3: Instalar jq
+      # 3. Instalar jq (para manipular archivos JSON)
       - name: Instalar jq
         run: |
           sudo apt-get install jq -y
 
-      # Paso 4: Verificar si GH_TOKEN está disponible
-      - name: Verificar GH_TOKEN
-        run: |
-          if [ -z "${{ secrets.GH_TOKEN }}" ]; then
-            echo "El token GH_TOKEN no está configurado."
-            exit 1
-          else
-            echo "GH_TOKEN está configurado correctamente."
-          fi
-
-      # Paso 5: Intentar autenticarse con GH CLI usando el token
+      # 4. Autenticarse con GitHub CLI utilizando el GH_TOKEN
       - name: Autenticarse con GH CLI
         run: |
           echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
-        continue-on-error: true  # Si hay un error, continúa con el flujo para verificarlo
 
-      # Paso 6: Verificar si la autenticación fue exitosa
-      - name: Verificar autenticación
-        run: |
-          gh auth status
-        continue-on-error: true  # Si hay un error, lo capturamos para revisarlo
-
-      # Paso 7: Crear el proyecto DOCUCODE-IA
+      # 5. Crear el proyecto DOCUCODE-IA
       - name: Crear el proyecto DOCUCODE-IA
         id: crear_proyecto
         run: |
-          if gh auth status; then
-            gh project create --title "DOCUCODE-IA" --format json > project.json
-            echo "PROJECT_ID=$(jq -r '.id' project.json)" >> $GITHUB_ENV
-          else
-            echo "La autenticación falló, no se puede crear el proyecto."
-            exit 1
-          fi
+          gh project create --title "DOCUCODE-IA" --format json > project.json
+          echo "PROJECT_ID=$(jq -r '.id' project.json)" >> $GITHUB_ENV
 
-      # Paso 8: Verificar si existe issue-list.json
+      # 6. Verificar si existe el archivo issue-list.json
       - name: Verificar si existe issue-list.json
         run: |
           if [ ! -f .github/issue-list.json ]; then
             echo "El archivo issue-list.json no existe en .github/"
             exit 1
-          else
-            echo "Archivo issue-list.json encontrado."
           fi
 
-      # Paso 9: Crear Issues y añadirlos al Proyecto
+      # 7. Crear Issues y añadirlos al Proyecto
       - name: Crear Issues y añadirlos al Proyecto
         run: |
           for row in $(jq -c '.[]' .github/issue-list.json); do
@@ -79,4 +54,4 @@ jobs:
             gh project item-add $PROJECT_ID --url "$ISSUE_URL"
           done
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}   # Aquí se pasa el GH_TOKEN como variable de entorno.
