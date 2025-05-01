@@ -1,4 +1,4 @@
-name: Crear Proyecto Clásico con Issues
+name: Agregar Issues al Proyecto Clásico
 
 on:
   push:
@@ -7,23 +7,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  crear-proyecto:
+  agregar-issues:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Instalar GitHub CLI
-        run: sudo apt-get install gh -y
-
-      - name: Autenticarse con GitHub CLI
+      - name: Instalar dependencias
         run: |
-          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
-
-      - name: Crear Proyecto Clásico
-        run: |
-          gh project create "DOCUCODE-IA" --body "Proyecto clásico de prueba para issues." --visibility public
+          sudo apt-get update
+          sudo apt-get install jq curl -y
 
       - name: Crear archivo de Issues de ejemplo si no existe
         run: |
@@ -31,10 +25,30 @@ jobs:
             echo '[{"title": "Issue 1", "body": "Descripción del issue 1"}, {"title": "Issue 2", "body": "Descripción del issue 2"}]' > .github/issue-list.json
           fi
 
-      - name: Crear Issues
+      - name: Crear Issues y agregarlos al Proyecto Clásico
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          OWNER="UPT-FAING-EPIS"
+          REPO="DOCUCODE-IA"
+          PROJECT_ID=248 # ID del proyecto clásico ya creado
+          
+          # Obtener la lista de columnas del proyecto clásico
+          COLUMNS=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/projects/$PROJECT_ID/columns)
+          COLUMN_ID=$(echo "$COLUMNS" | jq -r '.[0].id')  # Usa la primera columna
+
+          # Leer los issues del archivo JSON y crearlos
           for row in $(jq -c '.[]' .github/issue-list.json); do
             TITLE=$(echo "$row" | jq -r '.title')
             BODY=$(echo "$row" | jq -r '.body')
-            gh issue create --title "$TITLE" --body "$BODY"
+
+            # Crear issue y obtener URL
+            ISSUE_URL=$(curl -s -H "Authorization: token $GH_TOKEN" \
+              -X POST https://api.github.com/repos/$OWNER/$REPO/issues \
+              -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" | jq -r '.url')
+
+            # Agregar el issue a la columna del proyecto
+            curl -s -H "Authorization: token $GH_TOKEN" \
+              -X POST https://api.github.com/projects/columns/$COLUMN_ID/cards \
+              -d "{\"content_type\":\"Issue\",\"content_url\":\"$ISSUE_URL\"}"
           done
