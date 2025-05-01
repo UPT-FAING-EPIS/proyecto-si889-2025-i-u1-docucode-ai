@@ -9,72 +9,106 @@ on:
 jobs:
   crear-issues:
     runs-on: ubuntu-latest
+    env:
+      OWNER: UPT-FAING-EPIS
+      REPO: DOCUCODE-IA
+      PROJECT_NUMBER: "248"
 
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Validar JSON
+      - name: Validar estructura JSON
         run: |
-          if ! jq -e . .github/issue-list.json >/dev/null; then
-            echo "::error::Error en el formato JSON"
+          if ! jq -e 'if type == "array" then empty else halt_error(1) end' .github/issue-list.json >/dev/null; then
+            echo "::error::Error fatal: El archivo no es un array JSON válido"
             jq . .github/issue-list.json
             exit 1
           fi
-          echo "✓ JSON válido"
+          echo "✓ Validación JSON exitosa"
 
-      - name: Crear Issues en Proyecto Classic
+      - name: Obtener columnas del proyecto
+        id: get-columns
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          PROJECT_NUMBER: "248"  # Número visible en la URL
         run: |
-          OWNER="UPT-FAING-EPIS"
-          REPO="DOCUCODE-IA"
-
-          # Paso 1: Obtener columnas del proyecto CLASSIC
-          echo "Obteniendo columnas del proyecto $PROJECT_NUMBER..."
-          COLUMNS_RESPONSE=$(curl -s -w "\n%{http_code}" \
+          API_URL="https://api.github.com/repos/$OWNER/$REPO/projects/$PROJECT_NUMBER/columns"
+          
+          response=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
             -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github.inertia-preview+json" \
-            "https://api.github.com/repos/$OWNER/$REPO/projects/$PROJECT_NUMBER/columns")
+            "$API_URL")
 
-          HTTP_CODE=$(echo "$COLUMNS_RESPONSE" | tail -n1)
-          COLUMNS_JSON=$(echo "$COLUMNS_RESPONSE" | sed '$d')
+          http_code=$(echo "$response" | grep 'HTTP_CODE:' | cut -d':' -f2)
+          json_response=$(echo "$response" | sed '/HTTP_CODE:/d')
 
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "::error::Error al obtener columnas. Código: $HTTP_CODE"
-            echo "$COLUMNS_JSON"
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Error al obtener columnas (Código $http_code)"
+            echo "$json_response" | jq .
             exit 1
           fi
 
-          # Paso 2: Extraer ID de la primera columna (CLASSIC)
-          COLUMN_ID=$(echo "$COLUMNS_JSON" | jq -r '.[0].id')
-          if [ "$COLUMN_ID" == "null" ]; then
+          column_id=$(echo "$json_response" | jq -r 'if type == "array" and length > 0 then .[0].id else empty end')
+          
+          if [ -z "$column_id" ]; then
             echo "::error::No se encontraron columnas en el proyecto"
-            echo "$COLUMNS_JSON"
+            echo "$json_response" | jq .
             exit 1
           fi
-          echo "✓ Columna ID: $COLUMN_ID"
 
-          # Paso 3: Crear issues y agregar al proyecto
-          jq -c '.[]' .github/issue-list.json | while read -r issue; do
-            TITLE=$(echo "$issue" | jq -r '.title')
-            BODY=$(echo "$issue" | jq -r '.body')
+          echo "COLUMN_ID=$column_id" >> $GITHUB_ENV
+          echo "✓ Columna obtenida: $column_id"
+
+      - name: Crear issues
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          counter=0
+          total=$(jq 'length' .github/issue-list.json)
+
+          while read -r issue; do
+            ((counter++))
+            title=$(jq -r '.title' <<< "$issue")
+            body=$(jq -r '.body' <<< "$issue")
+
+            echo "--- Procesando ($counter/$total): $title ---"
 
             # Crear issue
-            echo "Creando issue: $TITLE..."
-            ISSUE_JSON=$(curl -s -H "Authorization: token $GH_TOKEN" \
+            issue_response=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
+              -H "Authorization: token $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              -X POST "https://api.github.com/repos/$OWNER/$REPO/issues" \
-              -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}")
+              -d "{\"title\":\"$title\",\"body\":\"$body\"}" \
+              "https://api.github.com/repos/$OWNER/$REPO/issues")
 
-            ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.id')
+            issue_http_code=$(echo "$issue_response" | grep 'HTTP_CODE:' | cut -d':' -f2)
+            issue_json=$(echo "$issue_response" | sed '/HTTP_CODE:/d')
 
-            # Agregar al proyecto CLASSIC
-            curl -s -H "Authorization: token $GH_TOKEN" \
+            if [ "$issue_http_code" != "201" ]; then
+              echo "::error::Error creando issue (Código $issue_http_code)"
+              echo "$issue_json" | jq .
+              continue
+            fi
+
+            issue_id=$(jq -r '.id' <<< "$issue_json")
+            node_id=$(jq -r '.node_id' <<< "$issue_json")
+
+            # Agregar al proyecto
+            card_response=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
+              -H "Authorization: token $GH_TOKEN" \
               -H "Accept: application/vnd.github.inertia-preview+json" \
-              -X POST "https://api.github.com/projects/columns/$COLUMN_ID/cards" \
-              -d "{\"content_id\":$ISSUE_ID, \"content_type\":\"Issue\"}"
+              -d "{\"content_id\":\"$node_id\",\"content_type\":\"Issue\"}" \
+              "https://api.github.com/projects/columns/$COLUMN_ID/cards")
 
-            echo "✓ Issue creado: $TITLE (ID: $ISSUE_ID)"
-          done
+            card_http_code=$(echo "$card_response" | grep 'HTTP_CODE:' | cut -d':' -f2)
+            card_json=$(echo "$card_response" | sed '/HTTP_CODE:/d')
+
+            if [ "$card_http_code" != "201" ]; then
+              echo "::warning::Error agregando al proyecto (Código $card_http_code)"
+              echo "$card_json" | jq .
+            else
+              echo "✓ Issue creado y agregado al proyecto: $title"
+            fi
+
+          done < <(jq -c '.[]' .github/issue-list.json)
+
+          echo "🚀 Proceso completado: $counter/$total issues procesados"
