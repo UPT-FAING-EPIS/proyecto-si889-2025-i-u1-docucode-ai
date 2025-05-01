@@ -14,9 +14,6 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Instalar jq
-        run: sudo apt-get install -y jq
-
       - name: Validar JSON
         run: |
           if ! jq -e . .github/issue-list.json >/dev/null; then
@@ -29,28 +26,44 @@ jobs:
       - name: Crear Issues en Proyecto
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          PROJECT_ID: "248"  # ID del proyecto existente
+          PROJECT_ID: "248"  # Verifica este ID
         run: |
           OWNER="UPT-FAING-EPIS"
           REPO="DOCUCODE-IA"
 
-          # Obtener columna "To do" del proyecto
-          COLUMNS=$(curl -s \
+          # Paso 1: Obtener columnas del proyecto (con debug)
+          echo "Obteniendo columnas del proyecto $PROJECT_ID..."
+          COLUMNS_RESPONSE=$(curl -s -w "\n%{http_code}" \
             -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/projects/$PROJECT_ID/columns")
 
-          COLUMN_ID=$(echo "$COLUMNS" | jq -r '.[0].id')
-          echo "::notice::Usando columna con ID: $COLUMN_ID"
+          HTTP_CODE=$(echo "$COLUMNS_RESPONSE" | tail -n1)
+          COLUMNS_JSON=$(echo "$COLUMNS_RESPONSE" | sed '$d')
 
-          # Crear issues desde el JSON
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Error al obtener columnas. Código: $HTTP_CODE"
+            echo "$COLUMNS_JSON"
+            exit 1
+          fi
+
+          # Paso 2: Extraer ID de la primera columna
+          COLUMN_ID=$(echo "$COLUMNS_JSON" | jq -r '.[0].id')
+          if [ "$COLUMN_ID" == "null" ]; then
+            echo "::error::No se encontraron columnas en el proyecto"
+            echo "$COLUMNS_JSON"
+            exit 1
+          fi
+          echo "✓ Columna ID: $COLUMN_ID"
+
+          # Paso 3: Crear issues
           jq -c '.[]' .github/issue-list.json | while read -r issue; do
             TITLE=$(echo "$issue" | jq -r '.title')
             BODY=$(echo "$issue" | jq -r '.body')
 
             # Crear issue
-            ISSUE_JSON=$(curl -s \
-              -H "Authorization: token $GH_TOKEN" \
+            echo "Creando issue: $TITLE..."
+            ISSUE_JSON=$(curl -s -H "Authorization: token $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               -X POST "https://api.github.com/repos/$OWNER/$REPO/issues" \
               -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}")
@@ -59,13 +72,10 @@ jobs:
             NODE_ID=$(echo "$ISSUE_JSON" | jq -r '.node_id')
 
             # Agregar al proyecto
-            curl -s \
-              -H "Authorization: token $GH_TOKEN" \
+            curl -s -H "Authorization: token $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               -X POST "https://api.github.com/projects/columns/$COLUMN_ID/cards" \
               -d "{\"content_id\":\"$NODE_ID\",\"content_type\":\"Issue\"}"
 
             echo "✓ Issue creado: $TITLE (ID: $ISSUE_ID)"
           done
-
-          echo "::notice::Todos los issues fueron agregados al proyecto https://github.com/orgs/UPT-FAING-EPIS/projects/248"
