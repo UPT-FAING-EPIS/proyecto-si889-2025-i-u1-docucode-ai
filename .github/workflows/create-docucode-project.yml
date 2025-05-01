@@ -40,10 +40,9 @@ jobs:
 
       - name: Verificar formato de JSON y crear Issues
         run: |
-          # Intentar verificar si el archivo JSON es válido
-          if ! jq empty .github/issue-list.json 2>/tmp/jq_errors.log; then
-            echo "El archivo JSON tiene errores de sintaxis. Verifica el archivo .github/issue-list.json"
-            cat /tmp/jq_errors.log
+          # Asegurarse de que el archivo JSON no tenga errores
+          if ! jq .github/issue-list.json >/dev/null 2>&1; then
+            echo "Error: El archivo JSON tiene problemas de formato."
             exit 1
           else
             echo "Archivo JSON válido. Procediendo con la creación de los issues."
