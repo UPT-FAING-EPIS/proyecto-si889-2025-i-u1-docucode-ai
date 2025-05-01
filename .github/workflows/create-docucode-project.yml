@@ -10,45 +10,42 @@ jobs:
   crear-issues:
     runs-on: ubuntu-latest
     env:
-      OWNER: UPT-FAING-EPIS
-      REPO: DOCUCODE-IA
-      PROJECT_ID: "ID_OBTENIDO" # Usar el ID real aquí
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Token con permisos admin:org y repo
+      ORG: UPT-FAING-EPIS
+      PROJECT_ID: "ID_OBTENIDO_DEL_PASO_1"  # Ej: 123456 (no el 248)
 
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Validar estructura JSON
+      - name: Validar JSON
         run: |
-          if ! jq -e 'type == "array" and (.[] | has("title") and has("body"))' .github/issue-list.json >/dev/null; then
-            echo "::error::Error en el JSON"
-            jq . .github/issue-list.json
+          if ! jq -e 'type == "array" and (.[] | has("title") and has("body"))' .github/issue-list.json; then
+            echo "::error::Estructura JSON inválida"
             exit 1
           fi
 
-      - name: Obtener columnas del proyecto
+      - name: Obtener Columnas del Proyecto
         id: get-columns
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          API_URL="https://api.github.com/orgs/$OWNER/projects/$PROJECT_ID/columns"
-          
+          API_URL="https://api.github.com/orgs/$ORG/projects/$PROJECT_ID/columns"
+
           response=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
             -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github.inertia-preview+json" \
             "$API_URL")
 
           http_code=$(echo "$response" | awk -F: '/HTTP_CODE:/{print $2}')
-          json_response=$(echo "$response" | sed '/HTTP_CODE:/d')
+          json_data=$(echo "$response" | sed '/HTTP_CODE:/d')
 
           if [ "$http_code" != "200" ]; then
-            echo "::error::Error $http_code al obtener columnas"
-            echo "$json_response" | jq .
+            echo "::error::Error $http_code al acceder a: $API_URL"
+            echo "$json_data" | jq .
             exit 1
           fi
 
-          echo "COLUMN_ID=$(echo "$json_response" | jq -r '.[0].id')" >> $GITHUB_ENV
-          echo "✓ Columna obtenida: $column_id"
+          echo "COLUMN_ID=$(echo "$json_data" | jq -r '.[0].id')" >> $GITHUB_ENV
+          echo "✓ Columna ID: $COLUMN_ID"
 
       - name: Crear issues
         env:
