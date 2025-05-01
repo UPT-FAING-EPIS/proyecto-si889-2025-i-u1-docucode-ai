@@ -32,39 +32,24 @@ jobs:
           PROJECT_JSON=$(curl -s -H "Authorization: token $GH_TOKEN" \
             -X POST https://api.github.com/repos/$OWNER/$REPO/projects/v2 \
             -d '{"name": "DOCUCODE-IA", "body": "Proyecto usando nueva experiencia", "visibility": "public"}')
-
-          # Verificar si la creación del proyecto fue exitosa
+          
           PROJECT_ID=$(echo "$PROJECT_JSON" | jq -r '.id')
-          if [ "$PROJECT_ID" == "null" ]; then
-            echo "Error al crear el proyecto: $PROJECT_JSON"
-            exit 1
-          fi
           echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
           
           echo "Proyecto V2 creado con ID: $PROJECT_ID"
 
       - name: Crear Issues y agregarlos al Proyecto V2
         run: |
-          OWNER="UPT-FAING-EPIS"
-          REPO="DOCUCODE-IA"
-
-          # Recorrer cada issue en el archivo JSON y crearlos
           for row in $(jq -c '.[]' .github/issue-list.json); do
             TITLE=$(echo "$row" | jq -r '.title')
             BODY=$(echo "$row" | jq -r '.body')
 
-            # Crear el issue en GitHub y obtener su URL
+            # Crear issue y obtener URL
             ISSUE_URL=$(curl -s -H "Authorization: token $GH_TOKEN" \
               -X POST https://api.github.com/repos/$OWNER/$REPO/issues \
               -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" | jq -r '.url')
 
-            # Verificar si la creación del issue fue exitosa
-            if [ "$ISSUE_URL" == "null" ]; then
-              echo "Error al crear el issue: $TITLE"
-              exit 1
-            fi
-
-            # Crear tarjeta para el proyecto V2 asociando el issue
+            # Crear tarjeta para el proyecto V2
             curl -s -H "Authorization: token $GH_TOKEN" \
               -X POST https://api.github.com/projects/v2/columns/cards \
               -d "{\"project_id\":\"$PROJECT_ID\", \"content_type\":\"Issue\", \"content_url\":\"$ISSUE_URL\"}"
