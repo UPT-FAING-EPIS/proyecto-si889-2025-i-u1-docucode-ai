@@ -1,0 +1,34 @@
+name: Crear Proyecto DOCUCODE-IA con Issues
+
+on:
+  workflow_dispatch:
+
+jobs:
+  crear-proyecto:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar GitHub CLI
+        run: sudo apt-get install gh -y
+
+      - name: Autenticarse con GH CLI
+        run: echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+
+      - name: Crear el proyecto DOCUCODE-IA
+        id: crear_proyecto
+        run: |
+          gh project create --title "DOCUCODE-IA" --format json > project.json
+          echo "PROJECT_ID=$(jq -r '.id' project.json)" >> $GITHUB_ENV
+
+      - name: Crear Issues y añadirlos al Proyecto
+        run: |
+          for row in $(jq -c '.[]' .github/issue-list.json); do
+            TITLE=$(echo "$row" | jq -r '.title')
+            BODY=$(echo "$row" | jq -r '.body')
+            ISSUE_URL=$(gh issue create --title "$TITLE" --body "$BODY" --json url | jq -r '.url')
+            gh project item-add $PROJECT_ID --url "$ISSUE_URL"
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
