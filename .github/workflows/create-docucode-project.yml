@@ -24,10 +24,10 @@ jobs:
         run: |
           sudo apt-get install jq -y
 
-      # 4. Autenticarse con GitHub CLI utilizando el GH_TOKEN
+      # 4. Autenticarse con GitHub CLI utilizando el token directamente en el archivo YAML
       - name: Autenticarse con GH CLI
         run: |
-          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+          echo "YOUR_PERSONAL_ACCESS_TOKEN" | gh auth login --with-token
 
       # 5. Crear el proyecto DOCUCODE-IA
       - name: Crear el proyecto DOCUCODE-IA
@@ -53,5 +53,3 @@ jobs:
             ISSUE_URL=$(gh issue create --title "$TITLE" --body "$BODY" --json url | jq -r '.url')
             gh project item-add $PROJECT_ID --url "$ISSUE_URL"
           done
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}   # Aquí se pasa el GH_TOKEN como variable de entorno.
