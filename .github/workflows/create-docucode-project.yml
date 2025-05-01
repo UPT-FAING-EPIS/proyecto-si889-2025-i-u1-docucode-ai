@@ -11,7 +11,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Instalar GitHub CLI
-        run: sudo apt-get install gh -y
+        run: |
+          sudo apt-get install gh -y
+
+      - name: Instalar jq
+        run: |
+          sudo apt-get install jq -y
 
       - name: Autenticarse con GH CLI
         run: echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
@@ -21,6 +26,13 @@ jobs:
         run: |
           gh project create --title "DOCUCODE-IA" --format json > project.json
           echo "PROJECT_ID=$(jq -r '.id' project.json)" >> $GITHUB_ENV
+
+      - name: Verificar si existe issue-list.json
+        run: |
+          if [ ! -f .github/issue-list.json ]; then
+            echo "El archivo issue-list.json no existe en .github/"
+            exit 1
+          fi
 
       - name: Crear Issues y añadirlos al Proyecto
         run: |
