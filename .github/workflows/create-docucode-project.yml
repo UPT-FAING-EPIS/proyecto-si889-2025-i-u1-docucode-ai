@@ -1,4 +1,4 @@
-name: Agregar Issues al Proyecto Clásico
+name: Crear Proyecto con Issues en ProjectV2
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  agregar-issues:
+  crear-proyecto:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,29 +19,33 @@ jobs:
           sudo apt-get update
           sudo apt-get install jq curl -y
 
+      - name: Autenticarse con GitHub CLI
+        run: |
+          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+
+      - name: Crear Proyecto en la nueva experiencia
+        run: |
+          OWNER="UPT-FAING-EPIS"
+          REPO="DOCUCODE-IA"
+          
+          # Crear proyecto V2
+          PROJECT_JSON=$(curl -s -H "Authorization: token $GH_TOKEN" \
+            -X POST https://api.github.com/repos/$OWNER/$REPO/projects/v2 \
+            -d '{"name": "DOCUCODE-IA", "body": "Proyecto usando nueva experiencia", "visibility": "public"}')
+          
+          PROJECT_ID=$(echo "$PROJECT_JSON" | jq -r '.id')
+          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+          
+          echo "Proyecto V2 creado con ID: $PROJECT_ID"
+
       - name: Crear archivo de Issues de ejemplo si no existe
         run: |
           if [ ! -f .github/issue-list.json ]; then
             echo '[{"title": "Issue 1", "body": "Descripción del issue 1"}, {"title": "Issue 2", "body": "Descripción del issue 2"}]' > .github/issue-list.json
           fi
 
-      - name: Crear Issues y agregarlos al Proyecto Clásico
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Crear Issues y agregarlos al Proyecto V2
         run: |
-          OWNER="UPT-FAING-EPIS"
-          REPO="DOCUCODE-IA"
-          PROJECT_ID=248 # ID del proyecto clásico ya creado
-          
-          # Obtener las columnas del proyecto clásico y mostrar la respuesta
-          COLUMNS=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/projects/$PROJECT_ID/columns)
-          echo "Response from GitHub API (columns): $COLUMNS" # Esto imprime la respuesta completa
-          
-          # Intentar acceder a la primera columna
-          COLUMN_ID=$(echo "$COLUMNS" | jq -r '.[0].id')
-          echo "Column ID: $COLUMN_ID" # Mostrar el ID de la columna
-
-          # Leer los issues del archivo JSON y crearlos
           for row in $(jq -c '.[]' .github/issue-list.json); do
             TITLE=$(echo "$row" | jq -r '.title')
             BODY=$(echo "$row" | jq -r '.body')
@@ -51,8 +55,8 @@ jobs:
               -X POST https://api.github.com/repos/$OWNER/$REPO/issues \
               -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\"}" | jq -r '.url')
 
-            # Agregar el issue a la columna del proyecto
+            # Crear tarjeta para el proyecto V2
             curl -s -H "Authorization: token $GH_TOKEN" \
-              -X POST https://api.github.com/projects/columns/$COLUMN_ID/cards \
-              -d "{\"content_type\":\"Issue\",\"content_url\":\"$ISSUE_URL\"}"
+              -X POST https://api.github.com/projects/v2/columns/cards \
+              -d "{\"project_id\":\"$PROJECT_ID\", \"content_type\":\"Issue\", \"content_url\":\"$ISSUE_URL\"}"
           done
