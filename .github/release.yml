@@ -1,0 +1,54 @@
+
+name: Release Manager
+
+on:
+  push:
+    tags:
+      - 'v*'  # Detecta tags con formato v1.0.0
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Get version
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ steps.version.outputs.version }}
+        body: |
+          ## Changelog
+          $(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0)^..HEAD)
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/*
+        asset_name: release-${{ steps.version.outputs.version }}.zip
+        asset_content_type: application/zip
+
+    - name: Notify Slack (opcional)
+      if: always()
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_RELEASE_WEBHOOK }}
+        SLACK_MESSAGE: "Nuevo release publicado: ${{ steps.version.outputs.version }}"
