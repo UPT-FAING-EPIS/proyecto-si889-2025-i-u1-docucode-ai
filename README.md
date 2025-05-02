@@ -38,3 +38,70 @@ pip install -r requirements.txt
 
 # Configurar API Key de OpenAI
 echo "OPENAI_API_KEY=tu_clave_aqui" > .env
+
+```
+
+📚 Documentación Completa
+Consulta nuestra Wiki completa para:
+
+📖 Guía de usuario detallada
+
+🛠 Arquitectura técnica
+
+🔍 Ejemplos de uso avanzado
+
+🤝 Guía de contribución
+
+💻 Uso Básico
+
+from docucode import Analyzer
+
+# Analizar proyecto
+report = Analyzer.analyze(
+    path="mi_proyecto",
+    lang="python",
+    generate_uml=True
+)
+
+# Exportar resultados
+report.export(format="html")
+
+# Línea de comandos
+docucode analyze --input mi_proyecto --output report.pdf
+
+🤝 Contribuciones
+¡Tu ayuda es bienvenida! Sigue estos pasos:
+
+Revisa las issues abiertas
+
+Haz fork del proyecto
+
+Crea tu rama: git checkout -b feature/nueva-funcionalidad
+
+Envía un Pull Request
+
+Normas de código:
+Code Style
+Tests
+
+📄 Licencia
+MIT License - Ver LICENSE para detalles.
+
+<div align="center"> Hecho con ❤️ por el equipo DocuCode-AI </div> ```
+
+# Wiki DocuCode-AI 📚
+
+## 🏗️ Arquitectura del Sistema
+
+```mermaid
+graph TD
+  A[Usuario] --> B[Interfaz Web]
+  B --> C{API REST}
+  C --> D[Análisis de Código]
+  D --> E[Generador UML]
+  D --> F[Evaluador Calidad]
+  C --> G[Base de Datos]
+```
+
+
+
