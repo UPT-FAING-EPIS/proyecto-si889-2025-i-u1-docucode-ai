@@ -52,10 +52,20 @@ Sistema web inteligente basado en IA para la evaluación, documentación y anál
 | Estudiante          | Subida de archivos y visualización del análisis         |
 
 ---
+## Proceso Actual
+
+![image](https://github.com/user-attachments/assets/d57385a1-2cb5-44fd-a86e-0f3dceb6bbc4)
+
+---
+## Proceso propuesto
+
+![image](https://github.com/user-attachments/assets/94ab3562-cc4c-4cc4-970e-7219e8373213)
+
+---
 
 ## 🧠 Arquitectura y Diagrama de Paquetes
 
-![Diagrama de Paquetes](./diagrams/diagrama_paquetes.png)
+![image](https://github.com/user-attachments/assets/b292cd2b-e406-4906-9dd2-d817014aa0be)
 
 ---
 
@@ -63,7 +73,7 @@ Sistema web inteligente basado en IA para la evaluación, documentación y anál
 
 ### Casos de Uso
 
-![Diagrama Casos de Uso](./diagrams/diagrama_casos_uso.png)
+![image](https://github.com/user-attachments/assets/76eba9b1-e497-4f5e-8fad-5a3de3ef559b)
 
 ### Actividades
 
@@ -71,25 +81,12 @@ Sistema web inteligente basado en IA para la evaluación, documentación y anál
 
 ### Clases
 
-![Diagrama Clases](./diagrams/diagrama_clases.png)
+![image](https://github.com/user-attachments/assets/e1b36cee-a1b8-402f-a497-8f57d7fe7961)
 
-### Secuencia
 
-![Diagrama Secuencia](./diagrams/diagrama_secuencia.png)
-
-### Componentes
-
-![Diagrama Componentes](./diagrams/diagrama_componentes.png)
 
 ---
 
-## 📑 Documentación Técnica
-
-- [Informe de Factibilidad (FD01)](./docs/FD01-Informe-Factibilidad.md)
-- [Documento de Visión (FD02)](./docs/FD02-Informe-Vision.md)
-- [Especificación de Requerimientos (FD03)](./docs/FD03-Informe-Requerimientos.md)
-
----
 
 ## 🚀 Tecnologías Usadas
 
@@ -103,5 +100,4 @@ Sistema web inteligente basado en IA para la evaluación, documentación y anál
 
 ---
 
-## 📁 Estructura del Proyecto
 
