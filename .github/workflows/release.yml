@@ -3,39 +3,41 @@ name: Release PHP Project
 on:
   push:
     tags:
-      - 'v*'  # Este flujo se ejecutará cuando se haga un push a un tag que comience con 'v' (ej. v1.0.0)
+      - 'v*'  # Se ejecutará al hacer push a un tag que comience con 'v', como 'v1.0.0'
 
 jobs:
   release:
-    name: Create Release
-    runs-on: ubuntu-latest  # O 'windows-latest', según tu entorno
+    name: Build and Release PHP Project
+    runs-on: ubuntu-latest  # Cambiar a 'windows-latest' si el entorno lo requiere
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      # Paso 1: Checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.4'  # O la versión de PHP que estás utilizando
+      # Paso 2: Configurar PHP
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'  # Cambiar a la versión que uses (por ejemplo, '8.1')
 
-    - name: Navigate to DocuCodeAI directory
-      run: cd DocuCodeAI  # Navega a la carpeta donde se encuentra composer.json
+      # Paso 3: Instalar dependencias
+      - name: Install dependencies
+        run: |
+          cd DocuCodeAI  # Asegúrate de que esta ruta sea correcta
+          composer install --no-interaction --prefer-dist
 
-    - name: Install dependencies
-      run: |
-        cd DocuCodeAI  # Asegúrate de estar en la carpeta correcta
-        composer install --no-interaction --prefer-dist
+      # Paso 4: Crear archivo comprimido para el release
+      - name: Create the release archive
+        run: |
+          mkdir release
+          tar -czf release/my-php-project-${GITHUB_REF##*/}.tar.gz -C DocuCodeAI . # Cambiar la ruta según necesario
 
-    - name: Create the release archive
-      run: |
-        mkdir release
-        tar -czf release/my-php-project-${GITHUB_REF##*/}.tar.gz *  # Crea un archivo .tar.gz con el código fuente
-
-    - name: Create GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        VERSION_TAG=${GITHUB_REF##*/}
-        echo "Creating GitHub Release for version ${VERSION_TAG}"
-        gh release create $VERSION_TAG release/my-php-project-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"
+      # Paso 5: Crear un release en GitHub
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION_TAG=${GITHUB_REF##*/}
+          echo "Creating GitHub Release for version ${VERSION_TAG}"
+          gh release create $VERSION_TAG release/my-php-project-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"
