@@ -4,41 +4,46 @@ require_once 'src/UMLBuilder.php';
 require_once 'src/UMLGenerator.php';
 require_once 'src/FileHandler.php';
 
+
 $file = $_GET['file'] ?? '';
 if (!$file) die("Archivo no especificado.");
 
-// === Paso 1: Análisis del código con OpenAI
 $resultado = Facade::processCode("uploads/" . $file);
 
-// === Paso 2: Extraer archivos para UML
 $handler = new FileHandler();
 $files = $handler->extractAndListFiles("uploads/" . $file);
 
-// === Paso 3: Generar diagramas dinámicamente
+
+$ai = new OpenAIClient();
+$fullCode = '';
+foreach ($files as $f) { $fullCode .= file_get_contents($f) . "\n"; }
+$evaluacion = $ai->evaluarCalidadCodigo($fullCode);
+
+
 $builder = new UMLBuilder();
 $generator = new UMLGenerator();
 
-// Diagrama de Clases
+
 $classUml = $builder->generateClassDiagram($files);
 $classUrl = $generator->generarDesdeTexto($classUml);
 
-// Diagrama de Secuencia (ahora dinámico)
+
 $seqUml = $builder->generateSequenceDiagram($files);
 $seqUrl = $generator->generarDesdeTexto($seqUml);
 
-// Diagrama de Casos de Uso (ahora dinámico)
+
 $useUml = $builder->generateUseCaseDiagram($files);
 $useUrl = $generator->generarDesdeTexto($useUml);
 
-// 4. Diagrama de Actividad
+
 $activityUml = $builder->generateActivityDiagram($files);
 $activityUrl = $generator->generarDesdeTexto($activityUml);
 
-// 5. Diagrama de Componentes
+
 $componentUml = $builder->generateComponentDiagram($files);
 $componentUrl = $generator->generarDesdeTexto($componentUml);
 
-// 6. Diagrama de Paquetes
+
 $packageUml = $builder->generatePackageDiagram($files);
 $packageUrl = $generator->generarDesdeTexto($packageUml);
 
@@ -78,6 +83,8 @@ $packageUrl = $generator->generarDesdeTexto($packageUml);
     <?= nl2br(htmlspecialchars($resultado)) ?>
 </div>
 
+<h2>📊 Evaluación de la calidad del código</h2>
+<div class="analyze-box"><?= nl2br(htmlspecialchars($evaluacion)) ?></div>
 
 <h2>📦 Diagrama de Clases UML</h2>
 <img src="<?= $classUrl ?>" alt="Diagrama de Clases UML">

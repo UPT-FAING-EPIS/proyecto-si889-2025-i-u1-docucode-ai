@@ -38,4 +38,23 @@ class OpenAIClient {
         $body = json_decode($response->getBody(), true);
         return $body['choices'][0]['message']['content'] ?? 'Sin respuesta de OpenAI';
     }
+
+    public function evaluarCalidadCodigo(string $code): string {
+        $prompt = "Evalúa este código PHP con una puntuación del 1 al 10 y justifica tu evaluación según principios de calidad como claridad, estilo, complejidad, adherencia a buenas prácticas, y uso de nombres adecuados:\n\n";
+        $input = substr($prompt . $code, 0, 6000); // recorta para no pasar límite
+    
+        $response = $this->client->post('chat/completions', [
+            'json' => [
+                'model' => 'gpt-4',
+                'messages' => [
+                    ['role' => 'system', 'content' => 'Eres un experto en buenas prácticas de programación.'],
+                    ['role' => 'user', 'content' => $input]
+                ]
+            ]
+        ]);
+    
+        $data = json_decode($response->getBody(), true);
+        return $data['choices'][0]['message']['content'] ?? 'Sin respuesta de OpenAI';
+    }
+    
 }
