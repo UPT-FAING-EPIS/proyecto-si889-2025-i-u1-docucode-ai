@@ -117,4 +117,78 @@ class UMLBuilder {
         $uml .= "@enduml";
         return $uml;
     }
+
+    public function generateActivityDiagram(array $files): string {
+        $uml = "@startuml\nstart\n";
+    
+        foreach ($files as $file) {
+            $code = file_get_contents($file);
+    
+            if (preg_match_all('/\b(if|else|foreach|for|while|switch|function)\b/', $code, $matches, PREG_OFFSET_CAPTURE)) {
+                foreach ($matches[1] as $match) {
+                    $token = trim($match[0]);
+                    $uml .= ":$token;\n";
+                    if ($token === "if" || $token === "else") {
+                        $uml .= "if (condición) then (sí)\n";
+                        $uml .= "  :hacer algo;\n";
+                        $uml .= "else (no)\n";
+                        $uml .= "  :hacer otra cosa;\n";
+                        $uml .= "endif\n";
+                    }
+                }
+            }
+        }
+    
+        $uml .= ":fin del flujo;\nstop\n@enduml";
+        return $uml;
+    }
+
+    public function generateComponentDiagram(array $files): string {
+        $uml = "@startuml\n";
+    
+        $componentes = [];
+    
+        foreach ($files as $file) {
+            $nombre = pathinfo($file, PATHINFO_FILENAME);
+            $componente = basename(dirname($file));
+    
+            if (!isset($componentes[$componente])) {
+                $componentes[$componente] = [];
+            }
+    
+            $componentes[$componente][] = $nombre;
+        }
+    
+        foreach ($componentes as $paquete => $clases) {
+            $uml .= "package \"$paquete\" {\n";
+            foreach ($clases as $clase) {
+                $uml .= "  [{$clase}]\n";
+            }
+            $uml .= "}\n";
+        }
+    
+        $uml .= "@enduml";
+        return $uml;
+    }
+
+    
+    public function generatePackageDiagram(array $files): string {
+        $uml = "@startuml\n";
+    
+        foreach ($files as $file) {
+            $path = str_replace("\\", "/", $file);
+            $parts = explode("/", $path);
+            $className = pathinfo($file, PATHINFO_FILENAME);
+            $package = end($parts); // carpeta inmediata
+    
+            $uml .= "package \"$package\" {\n";
+            $uml .= "  class $className\n";
+            $uml .= "}\n";
+        }
+    
+        $uml .= "@enduml";
+        return $uml;
+    }
+    
+    
 }
