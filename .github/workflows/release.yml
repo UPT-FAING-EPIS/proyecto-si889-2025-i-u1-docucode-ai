@@ -19,12 +19,8 @@ jobs:
       with:
         php-version: '7.4'  # O la versión de PHP que estás utilizando
 
-    - name: Navigate to DocuCodeAI directory
-      run: cd DocuCodeAI  # Navega a la carpeta donde se encuentra composer.json
-
     - name: Install dependencies
       run: |
-        cd DocuCodeAI  # Asegúrate de estar en la carpeta correcta
         composer install --no-interaction --prefer-dist
 
     - name: Create the release archive
