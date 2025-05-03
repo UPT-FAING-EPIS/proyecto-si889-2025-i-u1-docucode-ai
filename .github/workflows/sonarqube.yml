@@ -27,8 +27,13 @@ jobs:
         run: composer clear-cache
 
       - name: Update dependencies
-        run: composer update --no-interaction --prefer-dist
+        run: composer update --prefer-dist --no-interaction
         working-directory: ./DocuCodeAI
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+        working-directory: ./DocuCodeAI
+        continue-on-error: true
 
       - name: Regenerate Composer Autoload
         run: composer dump-autoload --no-dev --optimize
@@ -53,5 +58,3 @@ jobs:
             -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.login=$SONAR_TOKEN
         working-directory: ./DocuCodeAI
-
-
