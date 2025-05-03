@@ -53,135 +53,140 @@ Integrantes:
 
 ---
 
-## 1. INTRODUCCIÓN
+## INTRODUCCIÓN
 
-Este documento describe los requerimientos funcionales y no funcionales del sistema web DocuCode-AI. Se enfoca en facilitar la evaluación y documentación de código fuente mediante el uso de inteligencia artificial y la generación automática de diagramas UML.
+DocuCode-AI es un sistema web basado en Inteligencia Artificial, orientado a facilitar el análisis, documentación y evaluación del código fuente para uso académico. Este sistema está dirigido principalmente a docentes y estudiantes universitarios, brindando funcionalidades como generación automática de comentarios en código, elaboración de diagramas UML, análisis de calidad y detección de duplicados. El desarrollo del sistema se enmarca dentro de la asignatura de Patrones de Software y forma parte del proyecto académico correspondiente a la primera unidad.
+
+## I. GENERALIDADES DE LA EMPRESA
+
+### 1. Nombre de la Empresa
+DocuCode-AI
+
+### 2. Visión
+Ser una plataforma líder a nivel académico en la generación automatizada de documentación de código y evaluación inteligente de software, contribuyendo a mejorar la enseñanza y aprendizaje en el área de programación.
+
+### 3. Misión
+Desarrollar una solución web basada en inteligencia artificial que permita a los docentes y estudiantes analizar, documentar y entender código fuente de manera rápida, precisa y estructurada, promoviendo buenas prácticas de desarrollo y facilitando la revisión académica.
+
+### 4. Organigrama
+*(Por incluir)*
+
+## II. VISIONAMIENTO DE LA EMPRESA
+
+### 1. Descripción del Problema
+En el contexto educativo universitario, la revisión y comprensión del código fuente entregado por los estudiantes representa un desafío constante para los docentes. La falta de documentación, la presencia de código duplicado o mal estructurado, y el escaso uso de buenas prácticas de programación dificultan una evaluación objetiva, ágil y formativa. Esta problemática se agudiza cuando los cursos están orientados a proyectos prácticos, y los tiempos de revisión son limitados. Actualmente, la revisión del código se realiza de forma manual, lo cual genera demoras, evaluaciones subjetivas y una carga de trabajo innecesaria.
+
+### 2. Objetivos de Negocios
+- Reducir el tiempo de revisión del código por parte de los docentes.
+- Mejorar la calidad del aprendizaje práctico en programación.
+- Aumentar la objetividad en la evaluación de trabajos entregados.
+- Promover buenas prácticas de desarrollo desde etapas tempranas.
+- Integrar herramientas de inteligencia artificial en el proceso educativo.
+- Posicionar a la institución como promotora de la innovación académica.
+
+### 3. Objetivos de Diseño
+- Modularidad: Separar responsabilidades en componentes reutilizables.
+- Usabilidad: Interfaz clara e intuitiva.
+- Portabilidad: Compatible con cualquier navegador moderno.
+- Escalabilidad: Integración futura de nuevas funcionalidades.
+- Seguridad: Autenticación segura y privacidad de historiales.
+
+### 4. Alcance del Proyecto
+- Subida de archivos individuales o comprimidos.
+- Análisis del código con IA.
+- Comentarios automáticos explicativos.
+- Diagramas UML (clases, casos de uso, secuencia, actividad, paquetes, componentes).
+- Evaluación de calidad y detección de duplicados.
+- Registro/inicio de sesión por Google.
+- Historial por usuario.
+
+### 5. Viabilidad del Sistema
+- **Técnica**: Uso de tecnologías dominadas por el equipo.
+- **Operativa**: Fácil adopción por docentes.
+- **Económica**: Inversión baja con retorno alto en eficiencia.
+- **Académica**: Alta pertinencia curricular.
+
+### 6. Información del Levantamiento
+- Entrevistas a docentes.
+- Revisión de entregas de ciclos anteriores.
+- Comparación con herramientas actuales (GitHub Copilot, SonarQube).
+- Casos de éxito en otras universidades.
+
+## III. ANÁLISIS DE PROCESOS
+
+### a) Diagrama del Proceso Actual
+*(Por insertar diagrama)*
+
+### b) Diagrama del Proceso Propuesto
+*(Por insertar diagrama)*
+
+## IV. ESPECIFICACIÓN DE REQUERIMIENTOS DE SOFTWARE
+
+### a) Requerimientos Funcionales Iniciales
+
+| ID   | Nombre                               | Descripción                                                                 | Prioridad |
+|------|--------------------------------------|-----------------------------------------------------------------------------|-----------|
+| RF01 | Registro de usuario                 | El sistema permitirá registrar nuevos usuarios con correo y contraseña.     | Alta      |
+| RF02 | Inicio de sesión                    | El usuario podrá iniciar sesión con sus credenciales o cuenta de Google.    | Alta      |
+| RF03 | Subida de archivos de código        | El sistema permitirá subir archivos individuales o comprimidos.             | Alta      |
+| RF04 | Comentarios automáticos             | Se generarán comentarios mediante IA.                                       | Alta      |
+| RF05 | Diagramas UML (básicos)             | Se generarán automáticamente clases, casos de uso y secuencia.              | Alta      |
+
+### b) Requerimientos No Funcionales
+
+| ID    | Requerimiento           | Descripción                                               | Prioridad |
+|-------|--------------------------|-----------------------------------------------------------|-----------|
+| RNF01 | Usabilidad               | Interfaz amigable para docentes y estudiantes.            | Media     |
+| RNF02 | Rendimiento              | Análisis en menos de 10 segundos por archivo.             | Alta      |
+| RNF03 | Seguridad                | Cifrado de contraseñas y protección de archivos.          | Alta      |
+| RNF04 | Escalabilidad            | Soporte para múltiples usuarios simultáneamente.          | Media     |
+
+### c) Requerimientos Funcionales Finales
+
+| ID   | Nombre                                | Descripción                                                                             | Prioridad |
+|------|----------------------------------------|-----------------------------------------------------------------------------------------|-----------|
+| RF01 | Registro de usuario                    | Registro con correo y contraseña.                                                      | Alta      |
+| RF02 | Inicio de sesión con Google            | Autenticación por Google OAuth.                                                        | Alta      |
+| RF03 | Subida de archivos                     | .php, .py, .rar aceptados.                                                             | Alta      |
+| RF04 | Comentarios automáticos                | Explicaciones línea por línea del código.                                              | Alta      |
+| RF05 | Diagramas UML (completos)              | Clases, casos de uso, secuencia, actividades, paquetes, componentes.                   | Alta      |
+| RF06 | Evaluación automática de calidad       | Métricas sobre claridad, modularidad y complejidad.                                    | Alta      |
+| RF07 | Detección de código duplicado          | Identificación de fragmentos similares.                                                | Alta      |
+| RF08 | Historial de análisis por usuario      | Visualización por usuario de análisis previos.                                         | Media     |
+
+### d) Reglas de Negocio
+
+| ID    | Regla                                                                 |
+|-------|-----------------------------------------------------------------------|
+| RN01  | Solo los usuarios registrados pueden analizar código.                |
+| RN02  | Tamaño máximo de archivos: 10MB.                                     |
+| RN03  | Los comentarios son referenciales y no reemplazan la revisión humana.|
+| RN04  | Cada análisis queda almacenado por usuario con fecha y resultados.   |
+| RN05  | No se aceptan archivos potencialmente peligrosos.                    |
+
+## V. FASE DE DESARROLLO
+
+### 1. Perfiles de Usuario
+
+| Perfil            | Descripción                                                                 |
+|-------------------|------------------------------------------------------------------------------|
+| Administrador     | Gestión total del sistema, usuarios y mantenimiento.                        |
+| Docente Evaluador | Analiza el código y revisa resultados generados.                           |
+| Estudiante        | Envía código para análisis y consulta de historial.                         |
+| Sistema Externo   | OpenAI, servicio externo que genera comentarios automáticos.                |
+
+### 2. Modelo Conceptual
+
+#### a) Diagrama de Paquetes
+*(Ver imagen o código PlantUML)*
+
+#### b) Diagrama de Casos de Uso
+*(Ver imagen o código PlantUML)*
+
+#### c) Escenarios de Caso de Uso
+*(Por desarrollar)*
 
 ---
 
-## 2. GENERALIDADES DE LA EMPRESA
+*Secciones pendientes*: Modelo lógico (actividades con objetos, secuencia, clases), conclusiones, recomendaciones, bibliografía y webgrafía.
 
-### 2.1 Nombre de la Empresa
-Universidad Privada de Tacna
-
-### 2.2 Visión
-Ser una universidad líder en innovación, investigación y desarrollo de tecnologías aplicadas a la educación.
-
-### 2.3 Misión
-Formar profesionales altamente calificados, con visión tecnológica y capacidad de implementar soluciones prácticas.
-
-### 2.4 Organigrama
-Rectorado → Facultad de Ingeniería → Escuela de Ingeniería de Sistemas → Equipo de Desarrollo de Proyectos
-
----
-
-## 3. VISIONAMIENTO DE LA EMPRESA
-
-### 3.1 Descripción del Problema
-Los docentes de programación invierten muchas horas en evaluar código sin herramientas automatizadas, lo que retrasa la retroalimentación a los estudiantes.
-
-### 3.2 Objetivos de Negocios
-Automatizar la evaluación de código, mejorar la calidad de enseñanza, reducir tiempos de revisión.
-
-### 3.3 Objetivos de Diseño
-Crear una plataforma web intuitiva, segura, escalable y capaz de generar resultados en tiempo real.
-
-### 3.4 Alcance del Proyecto
-DocuCode-AI permitirá subir archivos de código, analizar automáticamente su calidad, detectar código duplicado y generar diagramas UML explicativos.
-
-### 3.5 Viabilidad del Sistema
-Totalmente viable técnica, económica y operativamente en el contexto universitario con uso de VPS y API de OpenAI.
-
-### 3.6 Información Obtenida del Levantamiento
-Entrevistas a docentes, encuestas a estudiantes y revisión de prácticas académicas.
-
----
-
-## 4. ANÁLISIS DE PROCESOS
-
-### 4.1 Diagrama del Proceso Actual
-Los docentes descargan manualmente el código, lo leen y comentan uno por uno, generando retrabajo.
-
-### 4.2 Diagrama del Proceso Propuesto
-Los docentes suben archivos al sistema, que automáticamente analiza y devuelve comentarios, métricas y diagramas.
-
----
-
-## 5. ESPECIFICACIÓN DE REQUERIMIENTOS DE SOFTWARE
-
-### 5.1 Requerimientos Funcionales Iniciales
-
-| Código | Descripción                                      |
-|--------|--------------------------------------------------|
-| RF01   | El sistema debe permitir subir archivos .zip     |
-| RF02   | El sistema debe analizar el código fuente        |
-| RF03   | El sistema debe generar comentarios automáticos  |
-| RF04   | El sistema debe mostrar diagramas UML            |
-| RF05   | El sistema debe guardar historial por usuario    |
-
-### 5.2 Requerimientos No Funcionales
-
-| Código | Descripción                                      |
-|--------|--------------------------------------------------|
-| RNF01  | La interfaz debe ser accesible desde navegadores |
-| RNF02  | La plataforma debe estar operativa 24/7          |
-| RNF03  | El análisis debe completarse en menos de 1 min   |
-
-### 5.3 Requerimientos Funcionales Finales
-(Se detallarán después de pruebas e iteraciones con usuarios)
-
-### 5.4 Reglas de Negocio
-
-- Solo usuarios autenticados pueden analizar código.
-- El código subido no debe exceder 10 MB.
-- Los archivos se almacenan temporalmente por 30 días.
-
----
-
-## 6. FASE DE DESARROLLO
-
-### 6.1 Perfiles de Usuario
-
-- **Docente**: Accede al análisis, revisa resultados y retroalimenta al estudiante.
-- **Estudiante**: Recibe comentarios y mejora su código.
-- **Administrador**: Gestiona usuarios y recursos del servidor.
-
-### 6.2 Diagramas UML
-
-Incluye:
-- Diagrama de paquetes
-- Diagrama de casos de uso
-- Diagrama de actividades
-- Diagrama de clases
-- Diagrama de secuencia
-
-(Diagramas generados automáticamente a partir del código fuente usando PlantUML)
-
----
-
-## 7. CONCLUSIONES
-
-DocuCode-AI responde a una necesidad real en la enseñanza de la programación. Automatiza tareas repetitivas, mejora la objetividad en la evaluación y aporta herramientas visuales para el entendimiento del código. Su implementación es factible con los recursos disponibles.
-
----
-
-## 8. RECOMENDACIONES
-
-- Continuar el desarrollo con pruebas piloto en cursos reales.
-- Incorporar soporte para más lenguajes de programación.
-- Añadir funcionalidades de retroalimentación docente en tiempo real.
-
----
-
-## 9. BIBLIOGRAFÍA
-
-- Pressman, R. (2010). *Ingeniería de Software*.
-- Sommerville, I. (2011). *Software Engineering*.
-
----
-
-## 10. WEBGRAFÍA
-
-- https://www.openai.com/
-- https://plantuml.com/
-- https://www.elastika.net/
