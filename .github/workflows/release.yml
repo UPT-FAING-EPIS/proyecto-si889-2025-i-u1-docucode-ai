@@ -8,7 +8,7 @@ on:
 jobs:
   release:
     name: Create Release
-    runs-on: ubuntu-latest  # O 'windows-latest', según tu entorno
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
@@ -17,20 +17,17 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.4'  # O la versión de PHP que estás utilizando
-
-    - name: Navigate to DocuCodeAI directory
-      run: cd DocuCodeAI  # Navega a la carpeta donde se encuentra composer.json
+        php-version: '7.4'
 
     - name: Install dependencies
-      run: |
-        cd DocuCodeAI  # Asegúrate de estar en la carpeta correcta
-        composer install --no-interaction --prefer-dist
+      run: composer install --no-interaction --prefer-dist
+      working-directory: ./DocuCodeAI
 
     - name: Create the release archive
       run: |
-        mkdir release
-        tar -czf release/my-php-project-${GITHUB_REF##*/}.tar.gz *  # Crea un archivo .tar.gz con el código fuente
+        mkdir -p release
+        tar -czf release/my-php-project-${GITHUB_REF##*/}.tar.gz *
+      working-directory: ./DocuCodeAI
 
     - name: Create GitHub Release
       env:
@@ -38,4 +35,4 @@ jobs:
       run: |
         VERSION_TAG=${GITHUB_REF##*/}
         echo "Creating GitHub Release for version ${VERSION_TAG}"
-        gh release create $VERSION_TAG release/my-php-project-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"
+        gh release create $VERSION_TAG DocuCodeAI/release/my-php-project-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"
