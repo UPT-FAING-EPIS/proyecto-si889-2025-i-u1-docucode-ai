@@ -75,9 +75,6 @@ Sistema web inteligente basado en IA para la evaluación, documentación y anál
 
 ![image](https://github.com/user-attachments/assets/76eba9b1-e497-4f5e-8fad-5a3de3ef559b)
 
-### Actividades
-
-![Diagrama Actividades](./diagrams/diagrama_actividades.png)
 
 ### Clases
 
