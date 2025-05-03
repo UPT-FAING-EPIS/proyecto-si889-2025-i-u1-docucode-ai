@@ -3,6 +3,7 @@ require_once 'src/Facade.php';
 require_once 'src/UMLBuilder.php';
 require_once 'src/UMLGenerator.php';
 require_once 'src/FileHandler.php';
+require_once 'src/DuplicateDetector.php';
 
 
 $file = $_GET['file'] ?? '';
@@ -19,6 +20,8 @@ $fullCode = '';
 foreach ($files as $f) { $fullCode .= file_get_contents($f) . "\n"; }
 $evaluacion = $ai->evaluarCalidadCodigo($fullCode);
 
+$detector = new DuplicateDetector();
+$duplicados = $detector->detectarDuplicados($files);
 
 $builder = new UMLBuilder();
 $generator = new UMLGenerator();
@@ -85,6 +88,18 @@ $packageUrl = $generator->generarDesdeTexto($packageUml);
 
 <h2>📊 Evaluación de la calidad del código</h2>
 <div class="analyze-box"><?= nl2br(htmlspecialchars($evaluacion)) ?></div>
+
+<h2>🧬 Detección de código duplicado</h2>
+<?php if (count($duplicados)): ?>
+    <ul>
+    <?php foreach ($duplicados as $dup): ?>
+        <li><strong><?= basename($dup['archivo1']) ?></strong> y <strong><?= basename($dup['archivo2']) ?></strong> comparten un bloque similar:<br>
+        <code><?= htmlspecialchars($dup['bloque']) ?></code></li>
+    <?php endforeach; ?>
+    </ul>
+<?php else: ?>
+    <p>No se encontraron duplicados.</p>
+<?php endif; ?>
 
 <h2>📦 Diagrama de Clases UML</h2>
 <img src="<?= $classUrl ?>" alt="Diagrama de Clases UML">
