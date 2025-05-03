@@ -3,7 +3,7 @@ name: Release PHP Project
 on:
   push:
     tags:
-      - 'v*'  # Este flujo se ejecutará cuando se haga un push a un tag que comience con 'v' (ej. v1.0.0)
+      - 'v*'  # Se ejecuta cuando haces push de un tag como v1.0.0
 
 jobs:
   release:
@@ -11,28 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.4'
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
 
-    - name: Install dependencies
-      run: composer install --no-interaction --prefer-dist
-      working-directory: ./DocuCodeAI
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+        working-directory: ./DocuCodeAI
 
-    - name: Create the release archive
-      run: |
-        mkdir -p release
-        tar -czf release/my-php-project-${GITHUB_REF##*/}.tar.gz *
-      working-directory: ./DocuCodeAI
+      - name: Create the release archive
+        run: |
+          mkdir -p release
+          tar -czf release/my-php-project-${GITHUB_REF##*/}.tar.gz *
+        working-directory: ./DocuCodeAI
 
-    - name: Create GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        VERSION_TAG=${GITHUB_REF##*/}
-        echo "Creating GitHub Release for version ${VERSION_TAG}"
-        gh release create $VERSION_TAG DocuCodeAI/release/my-php-project-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION_TAG=${GITHUB_REF##*/}
+          gh release create $VERSION_TAG DocuCodeAI/release/my-php-project-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"
