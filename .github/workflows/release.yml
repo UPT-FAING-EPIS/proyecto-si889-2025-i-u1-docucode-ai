@@ -3,41 +3,36 @@ name: Release PHP Project
 on:
   push:
     tags:
-      - 'v*'  # Se ejecutará al hacer push a un tag que comience con 'v', como 'v1.0.0'
+      - 'v*'  # Se ejecutará cuando se haga push a un tag como 'v1.0.0'
 
 jobs:
   release:
-    name: Build and Release PHP Project
-    runs-on: ubuntu-latest  # Cambiar a 'windows-latest' si el entorno lo requiere
+    name: Create Release
+    runs-on: ubuntu-latest
 
     steps:
-      # Paso 1: Checkout del código
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # Paso 2: Configurar PHP
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'  # Cambiar a la versión que uses (por ejemplo, '8.1')
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
 
-      # Paso 3: Instalar dependencias
-      - name: Install dependencies
-        run: |
-          cd DocuCodeAI  # Asegúrate de que esta ruta sea correcta
-          composer install --no-interaction --prefer-dist
+    - name: Install dependencies
+      run: |
+        cd DocuCodeAI
+        composer install --no-interaction --prefer-dist
 
-      # Paso 4: Crear archivo comprimido para el release
-      - name: Create the release archive
-        run: |
-          mkdir release
-          tar -czf release/my-php-project-${GITHUB_REF##*/}.tar.gz -C DocuCodeAI . # Cambiar la ruta según necesario
+    - name: Create the release archive
+      run: |
+        mkdir release
+        tar -czf release/docucodeai-${GITHUB_REF##*/}.tar.gz DocuCodeAI
 
-      # Paso 5: Crear un release en GitHub
-      - name: Create GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION_TAG=${GITHUB_REF##*/}
-          echo "Creating GitHub Release for version ${VERSION_TAG}"
-          gh release create $VERSION_TAG release/my-php-project-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"
+    - name: Create GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        VERSION_TAG=${GITHUB_REF##*/}
+        echo "Creating GitHub Release for version ${VERSION_TAG}"
+        gh release create $VERSION_TAG release/docucodeai-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"
