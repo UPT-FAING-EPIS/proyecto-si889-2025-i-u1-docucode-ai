@@ -54,3 +54,4 @@ jobs:
             -Dsonar.login=$SONAR_TOKEN
         working-directory: ./DocuCodeAI
 
+
