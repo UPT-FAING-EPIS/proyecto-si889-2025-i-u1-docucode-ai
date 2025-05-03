@@ -1,3 +1,4 @@
+
 name: SonarQube Analysis
 
 on:
@@ -14,35 +15,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.4'
-        coverage: 'coverage'
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: 'xdebug'
 
-    - name: Install dependencies
-      run: composer install --no-interaction --prefer-dist
-      working-directory: ./DocuCodeAI
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+        working-directory: ./DocuCodeAI
 
-    - name: Run PHPUnit tests
-      run: vendor/bin/phpunit --coverage-clover=coverage/clover.xml
-      working-directory: ./DocuCodeAI
+      - name: Run PHPUnit tests
+        run: vendor/bin/phpunit --coverage-clover=coverage/clover.xml
+        working-directory: ./DocuCodeAI
 
-    - name: SonarQube Scan
-      env:
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner \
-          -Dsonar.projectKey=my-php-project \
-          -Dsonar.projectName="My PHP Project" \
-          -Dsonar.projectVersion=1.0 \
-          -Dsonar.sources=src \
-          -Dsonar.tests=tests \
-          -Dsonar.php.coverage.reportPaths=coverage/clover.xml \
-          -Dsonar.host.url=$SONAR_HOST_URL \
-          -Dsonar.login=$SONAR_TOKEN
-      working-directory: ./DocuCodeAI
+      - name: SonarQube Scan
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=my-php-project \
+            -Dsonar.projectName="My PHP Project" \
+            -Dsonar.projectVersion=1.0 \
+            -Dsonar.sources=src \
+            -Dsonar.tests=tests \
+            -Dsonar.php.coverage.reportPaths=coverage/clover.xml \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN
+        working-directory: ./DocuCodeAI
