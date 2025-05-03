@@ -3,7 +3,7 @@ name: Release PHP Project
 on:
   push:
     tags:
-      - 'v*'  # Se ejecutará cuando se haga push a un tag como 'v1.0.0'
+      - 'v*'  # Este flujo se ejecutará cuando se haga push a un tag como 'v1.0.0'
 
 jobs:
   release:
@@ -20,9 +20,8 @@ jobs:
         php-version: '7.4'
 
     - name: Install dependencies
-      run: |
-        cd DocuCodeAI
-        composer install --no-interaction --prefer-dist
+      working-directory: ./DocuCodeAI
+      run: composer install --no-interaction --prefer-dist
 
     - name: Create the release archive
       run: |
