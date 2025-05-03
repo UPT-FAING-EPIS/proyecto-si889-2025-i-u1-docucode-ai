@@ -115,10 +115,10 @@ En el contexto educativo universitario, la revisión y comprensión del código 
 ## III. ANÁLISIS DE PROCESOS
 
 ### a) Diagrama del Proceso Actual
-*(Por insertar diagrama)*
+![image](https://github.com/user-attachments/assets/3e8eddf5-7590-4e97-84b8-074f8bee213d)
 
 ### b) Diagrama del Proceso Propuesto
-*(Por insertar diagrama)*
+![image](https://github.com/user-attachments/assets/2dacfe1a-f0ef-404d-bcff-b1a8a8d047a5)
 
 ## IV. ESPECIFICACIÓN DE REQUERIMIENTOS DE SOFTWARE
 
@@ -178,15 +178,14 @@ En el contexto educativo universitario, la revisión y comprensión del código 
 ### 2. Modelo Conceptual
 
 #### a) Diagrama de Paquetes
-*(Ver imagen o código PlantUML)*
+![image](https://github.com/user-attachments/assets/9a096de8-3070-4d83-9fdb-802d9c6e6187)
 
 #### b) Diagrama de Casos de Uso
-*(Ver imagen o código PlantUML)*
+![image](https://github.com/user-attachments/assets/743f13bb-e974-4d67-aa5d-191ee0f9115b)
 
 #### c) Escenarios de Caso de Uso
 *(Por desarrollar)*
+#### d) Diagrama de Clases
+![image](https://github.com/user-attachments/assets/714371d4-8d2d-45ba-95a5-6156e60437f1)
 
----
-
-*Secciones pendientes*: Modelo lógico (actividades con objetos, secuencia, clases), conclusiones, recomendaciones, bibliografía y webgrafía.
 
