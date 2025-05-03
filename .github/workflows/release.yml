@@ -1,53 +1,37 @@
-name: Release Manager
+name: Release PHP Project
 
 on:
   push:
     tags:
-      - 'v*'  # Detecta tags con formato v1.0.0
+      - 'v*'  # Este flujo se ejecutará cuando se haga un push a un tag que comience con 'v' (ej. v1.0.0)
 
 jobs:
-  create-release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest  # O 'windows-latest', según tu entorno
+
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
 
-    - name: Get version
-      id: version
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'  # O la versión de PHP que estás utilizando
+
+    - name: Install dependencies
       run: |
-        VERSION=${GITHUB_REF#refs/tags/v}
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        composer install --no-interaction --prefer-dist
 
-    - name: Create Release
-      uses: actions/create-release@v1
-      id: create_release
+    - name: Create the release archive
+      run: |
+        mkdir release
+        tar -czf release/my-php-project-${GITHUB_REF##*/}.tar.gz *  # Crea un archivo .tar.gz con el código fuente
+
+    - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ steps.version.outputs.version }}
-        body: |
-          ## Changelog
-          $(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0)^..HEAD)
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/*
-        asset_name: release-${{ steps.version.outputs.version }}.zip
-        asset_content_type: application/zip
-
-    - name: Notify Slack (opcional)
-      if: always()
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_RELEASE_WEBHOOK }}
-        SLACK_MESSAGE: "Nuevo release publicado: ${{ steps.version.outputs.version }}"
+      run: |
+        VERSION_TAG=${GITHUB_REF##*/}
+        echo "Creating GitHub Release for version ${VERSION_TAG}"
+        gh release create $VERSION_TAG release/my-php-project-${VERSION_TAG}.tar.gz --title "Release ${VERSION_TAG}" --notes "Release notes for version ${VERSION_TAG}"

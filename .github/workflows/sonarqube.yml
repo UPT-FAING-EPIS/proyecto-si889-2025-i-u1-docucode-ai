@@ -1,0 +1,47 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - main  # O la rama que deseas analizar
+  pull_request:
+    branches:
+      - main  # O la rama que deseas analizar
+
+jobs:
+  sonar:
+    name: Run SonarQube Analysis
+    runs-on: ubuntu-latest  # O 'windows-latest', según tu entorno
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'  # O la versión de PHP que estás utilizando
+        coverage: 'coverage'
+
+    - name: Install dependencies
+      run: |
+        composer install --no-interaction --prefer-dist
+
+    - name: Run PHPUnit tests
+      run: |
+        vendor/bin/phpunit --coverage-clover=coverage/clover.xml
+
+    - name: SonarQube Scan
+      env:
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  # URL de tu SonarQube
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Token de autenticación
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=my-php-project \
+          -Dsonar.projectName="My PHP Project" \
+          -Dsonar.projectVersion=1.0 \
+          -Dsonar.sources=src \
+          -Dsonar.tests=tests \
+          -Dsonar.php.coverage.reportPaths=coverage/clover.xml \
+          -Dsonar.host.url=$SONAR_HOST_URL \
+          -Dsonar.login=$SONAR_TOKEN
