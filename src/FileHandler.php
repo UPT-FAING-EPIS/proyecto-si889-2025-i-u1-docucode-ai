@@ -1,44 +1,46 @@
 <?php
-
 class FileHandler {
-    public function extractAndListFiles(string $filePath): array {
-        $ext = pathinfo($filePath, PATHINFO_EXTENSION);
-        $outputDir = dirname($filePath) . '/' . pathinfo($filePath, PATHINFO_FILENAME);
 
-        if (!file_exists($outputDir)) {
-            mkdir($outputDir, 0777, true);
+    /**
+     * Descomprime el ZIP en una carpeta temporal y devuelve un arreglo
+     * con rutas absolutas a todos los archivos .php encontrados.
+     *
+     * @param string $zipPath  Ruta al archivo ZIP (por ejemplo "uploads/miProyecto.zip").
+     * @return string[]        Array de rutas completas a cada archivo PHP extraído.
+     */
+    public function extractAndListFiles(string $zipPath): array
+    {
+        $zip = new ZipArchive;
+        $res = $zip->open($zipPath);
+        if ($res !== true) {
+            die("Error: No se pudo abrir el ZIP: $zipPath");
         }
 
-        if ($ext === 'zip') {
-            $zip = new ZipArchive();
-            if ($zip->open($filePath) === TRUE) {
-                $zip->extractTo($outputDir);
-                $zip->close();
-            } else {
-                throw new Exception("No se pudo abrir el archivo ZIP.");
-            }
-        } else {
-            // archivo suelto .php, .py, etc.
-            copy($filePath, $outputDir . '/' . basename($filePath));
+        // 1) Creamos una carpeta temporal única
+        $tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('docucode_');
+        if (!mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
+            die("Error: No se pudo crear la carpeta temporal $tempDir");
         }
 
-        // Obtener todos los archivos de código permitidos
-        $allowedExtensions = ['php', 'py', 'js', 'java'];
-        $codeFiles = [];
+        // 2) Extraemos TODO el contenido del ZIP en esa carpeta
+        $zip->extractTo($tempDir);
+        $zip->close();
 
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($outputDir)
+        // 3) Recorremos recursivamente esa carpeta y guardamos sólo los archivos .php
+        $phpFiles = [];
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($tempDir, FilesystemIterator::SKIP_DOTS)
         );
-
-        foreach ($iterator as $file) {
+        foreach ($it as $file) {
             if ($file->isFile()) {
-                $ext = pathinfo($file, PATHINFO_EXTENSION);
-                if (in_array($ext, $allowedExtensions)) {
-                    $codeFiles[] = $file->getPathname();
+                // Extensión en minúsculas
+                $ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+                if ($ext === 'php') {
+                    $phpFiles[] = $file->getRealPath();
                 }
             }
         }
 
-        return $codeFiles;
+        return $phpFiles;
     }
 }
